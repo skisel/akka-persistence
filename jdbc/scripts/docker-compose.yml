@@ -1,0 +1,27 @@
+postgres:
+  image: postgres:latest
+  container_name: postgres-test
+  environment:
+    - "TZ=Europe/Amsterdam"
+    - "POSTGRES_USER=docker"
+    - "POSTGRES_PASSWORD=docker"
+  ports:
+    - "5432:5432"  # credentials (docker:docker)
+
+mysql:
+  image: mysql:latest
+  container_name: mysql-test
+  environment:
+    - "TZ=Europe/Amsterdam"
+    - "MYSQL_ROOT_PASSWORD=root"
+  ports:
+    - "3306:3306" # credentials (root:root)
+
+oracle:
+  image: wnameless/oracle-xe-11g
+  container_name: oracle-test
+  environment:
+    - "TZ=Europe/Amsterdam"
+    - "DBCA_TOTAL_MEMORY=1024"
+  ports:
+    - "1521:1521" # DB_CONN: credentials (system:oracle)
