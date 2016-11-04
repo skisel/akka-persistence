@@ -34,3 +34,13 @@ lazy val journalWriter = project
     name := "akka-persistence-journal-writer",
     Dependencies.JournalWriter
   ).dependsOn(inmemory)
+
+lazy val docs = project
+  .in(file("paradox"))
+  .enablePlugins(ParadoxPlugin)
+  .settings(
+    version := "",
+    name := "akka-persistence",
+    paradoxTheme := Some(builtinParadoxTheme("generic")),
+    publishArtifact := false
+)

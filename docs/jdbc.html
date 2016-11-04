@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+
+<head>
+<title>akka-persistence-jdbc · akka-persistence</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content='Plugins and tooling for akka-persistence'/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:100normal,100italic,300normal,300italic,400normal,400italic,500normal,500italic,700normal,700italic,900normal,900italicc" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="lib/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="js/page.js"></script>
+<link rel="stylesheet" type="text/css" href="lib/normalize.css/normalize.css"/>
+<link rel="stylesheet" type="text/css" href="lib/foundation/dist/foundation.min.css"/>
+<link rel="stylesheet" type="text/css" href="css/page.css"/>
+
+<!--
+<link rel="shortcut icon" href="images/favicon.ico" />
+-->
+</head>
+
+<body>
+<div class="off-canvas-wrapper">
+<div class="off-canvas-wrapper-inner" data-off-canvas-wrapper>
+
+<div class="off-canvas position-left" id="off-canvas-menu" data-off-canvas>
+<nav class="off-canvas-nav">
+<div class="nav-home">
+<a href="index.html" >
+<span class="home-icon">⌂</span>akka-persistence
+</a>
+<div class="version-number">
+</div>
+</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="jdbc.html" class="active">akka-persistence-jdbc</a></li>
+  <li><a href="inmemory.html">akka-persistence-inmemory</a></li>
+  <li><a href="journal-writer.html">Journal Writer</a></li>
+</ul>
+</div>
+
+</nav>
+</div>
+
+<div class="off-canvas-content" data-off-canvas-content>
+
+<header class="site-header expanded row">
+<div class="small-12 column">
+<a href="#" class="off-canvas-toggle hide-for-medium" data-toggle="off-canvas-menu"><svg class="svg-icon svg-icon-menu" version="1.1" id="Menu" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" enable-background="new 0 0 20 20" xml:space="preserve"> <path class="svg-icon-menu-path" fill="#53CDEC" d="M16.4,9H3.6C3.048,9,3,9.447,3,10c0,0.553,0.048,1,0.6,1H16.4c0.552,0,0.6-0.447,0.6-1C17,9.447,16.952,9,16.4,9z M16.4,13
+H3.6C3.048,13,3,13.447,3,14c0,0.553,0.048,1,0.6,1H16.4c0.552,0,0.6-0.447,0.6-1C17,13.447,16.952,13,16.4,13z M3.6,7H16.4
+C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.048,7,3.6,7z"/></svg>
+</a>
+<div class="title"><a href="index.html">akka-persistence</a></div>
+
+<!--
+<a href="https://www.example.com" class="logo show-for-medium">logo</a>
+-->
+</div>
+</header>
+
+<div class="expanded row">
+
+<div class="medium-3 large-2 show-for-medium column">
+<nav class="site-nav">
+<div class="nav-home">
+<a href="index.html" >
+<span class="home-icon">⌂</span>akka-persistence
+</a>
+<div class="version-number">
+</div>
+</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="jdbc.html" class="active">akka-persistence-jdbc</a></li>
+  <li><a href="inmemory.html">akka-persistence-inmemory</a></li>
+  <li><a href="journal-writer.html">Journal Writer</a></li>
+</ul>
+</div>
+
+</nav>
+</div>
+
+<div class="small-12 medium-9 large-10 column">
+<section class="site-content">
+
+<div class="page-header row">
+<div class="medium-12 show-for-medium column">
+<div class="nav-breadcrumbs">
+<ul>
+  <li><a href="index.html">akka-persistence</a></li>
+  <li>akka-persistence-jdbc</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div class="page-content row">
+<div class="small-12 large-9 column" id="docs">
+<h1><a href="#akka-persistence-jdbc" name="akka-persistence-jdbc" class="anchor"><span class="anchor-link"></span></a>akka-persistence-jdbc</h1>
+<p><a href="https://gitter.im/dnvriend/akka-persistence-jdbc?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge"><img src="https://badges.gitter.im/dnvriend/akka-persistence-jdbc.svg" alt="Join the chat at https://gitter.im/dnvriend/akka-persistence-jdbc" /></a> <a href="https://travis-ci.org/dnvriend/akka-persistence-jdbc"><img src="https://travis-ci.org/dnvriend/akka-persistence-jdbc.svg?branch=master" alt="Build Status" /></a> <a href="https://bintray.com/dnvriend/maven/akka-persistence-jdbc/_latestVersion"><img src="https://api.bintray.com/packages/dnvriend/maven/akka-persistence-jdbc/images/download.svg" alt="Download" /></a> <a href="https://www.codacy.com/app/dnvriend/akka-persistence-jdbc?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dnvriend/akka-persistence-jdbc&amp;utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/a5d8576c2a56479ab1c40d87c78bba58" alt="Codacy Badge" /></a> <a href="http://www.apache.org/licenses/LICENSE-2.0.txt"><img src="http://img.shields.io/:license-Apache%202-red.svg" alt="License" /></a></p>
+<p>Akka-persistence-jdbc writes journal and snapshot entries entries to a configured JDBC store. It implements the full akka-persistence-query API and is therefore very useful for implementing DDD-style application models using Akka and Scala for creating reactive applications.</p>
+<h2><a href="#artifacts" name="artifacts" class="anchor"><span class="anchor-link"></span></a>Artifacts</h2>
+<dl>
+  <dt>sbt</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">libraryDependencies += &quot;com.github.dnvriend&quot; %% &quot;akka-persistence-jdbc&quot; % &quot;2.6.8&quot;
+</code></pre></dd>
+  <dt>Maven</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-xml">&lt;dependency&gt;
+  &lt;groupId&gt;com.github.dnvriend&lt;/groupId&gt;
+  &lt;artifactId&gt;akka-persistence-jdbc_2.11&lt;/artifactId&gt;
+  &lt;version&gt;2.6.8&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre></dd>
+  <dt>Gradle</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-gradle">dependencies {
+  compile group: &quot;com.github.dnvriend&quot;, name: &quot;akka-persistence-jdbc_2.11&quot;, version: &quot;2.6.8&quot;
+}
+</code></pre></dd>
+</dl>
+<p>Please note <a href="https://github.com/dnvriend/akka-persistence-jdbc/pull/75">PR #75 - Removed binary dependency on slick-extensions</a>, if you are using the Oracle driver, you must have a <a href="https://www.lightbend.com/platform/subscription">Lightbend subscription</a>. I have misinterpreted Lightbend open sourcing slick-extensions 3.1.0 as a change to the license, it didn&rsquo;t so you <strong>cannot</strong> use it for free.</p>
+<p>If using Oracle, you&rsquo;ll also need the Slick Oracle driver:</p><div class="callout note "><div class="callout-title">Note</div>
+<p>test</p></div>
+<h2><a href="#contribution-policy" name="contribution-policy" class="anchor"><span class="anchor-link"></span></a>Contribution policy</h2>
+<p>Contributions via GitHub pull requests are gladly accepted from their original author. Along with any pull requests, please state that the contribution is your original work and that you license the work to the project under the project&rsquo;s open source license. Whether or not you state this explicitly, by submitting any copyrighted material via pull request, email, or other means you agree to license the material under the project&rsquo;s open source license and warrant that you have the legal authority to do so.</p>
+<h2><a href="#license" name="license" class="anchor"><span class="anchor-link"></span></a>License</h2>
+<p>This code is open source software licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache 2.0 License</a>.</p>
+<h2><a href="#configuration" name="configuration" class="anchor"><span class="anchor-link"></span></a>Configuration</h2>
+<p>The new plugin relies on Slick to do create the SQL dialect for the database in use, therefore the following must be configured in <code>application.conf</code></p>
+<p>Configure <code>akka-persistence</code>: - instruct akka persistence to use the <code>jdbc-journal</code> plugin, - instruct akka persistence to use the <code>jdbc-snapshot-store</code> plugin,</p>
+<p>Configure <code>slick</code>: - The following slick drivers are supported:  - <code>slick.driver.PostgresDriver$</code>  - <code>slick.driver.MySQLDriver$</code>  - <code>slick.driver.H2Driver$</code>  - <code>com.typesafe.slick.driver.oracle.OracleDriver$</code></p>
+<h2><a href="#datasource-lookup-by-jndi-name" name="datasource-lookup-by-jndi-name" class="anchor"><span class="anchor-link"></span></a>DataSource lookup by JNDI name</h2>
+<p>The plugin uses <code>slick</code> as the database access library. Slick <a href="http://slick.typesafe.com/doc/3.1.1/database.html#using-a-jndi-name">supports jndi</a> for looking up <a href="http://docs.oracle.com/javase/8/docs/api/javax/sql/DataSource.html">DataSource</a>s.</p>
+<p>To enable the JNDI lookup, you must add the following to your <code>application.conf</code>:</p>
+<pre class="prettyprint"><code class="language-bash">jdbc-journal {
+  slick {
+    driver = &quot;slick.driver.PostgresDriver$&quot;
+    jndiName = &quot;java:jboss/datasources/PostgresDS&quot;   
+  }
+}
+</code></pre>
+<h2><a href="#postgres-configuration" name="postgres-configuration" class="anchor"><span class="anchor-link"></span></a>Postgres configuration</h2>
+<p>Base your akka-persistence-jdbc <code>application.conf</code> on <a href="https://github.com/dnvriend/akka-persistence-jdbc/blob/master/src/test/resources/postgres-application.conf">this config file</a></p>
+<h2><a href="#postgres-schema" name="postgres-schema" class="anchor"><span class="anchor-link"></span></a>Postgres schema</h2>
+<p>The schema is available <a href="https://github.com/dnvriend/akka-persistence-jdbc/blob/master/src/main/resources/schema/postgres/postgres-schema.sql">here</a></p>
+<h2><a href="#mysql-configuration" name="mysql-configuration" class="anchor"><span class="anchor-link"></span></a>MySQL configuration</h2>
+<p>Base your akka-persistence-jdbc <code>application.conf</code> on <a href="https://github.com/dnvriend/akka-persistence-jdbc/blob/master/src/test/resources/mysql-application.conf">this config file</a> </p>
+<h2><a href="#mysql-schema" name="mysql-schema" class="anchor"><span class="anchor-link"></span></a>MySQL schema</h2>
+<p>The schema is available <a href="https://github.com/dnvriend/akka-persistence-jdbc/blob/master/src/main/resources/schema/mysql/mysql-schema.sql">here</a></p>
+<h2><a href="#h2-configuration" name="h2-configuration" class="anchor"><span class="anchor-link"></span></a>H2 configuration</h2>
+<p>Base your akka-persistence-jdbc <code>application.conf</code> on <a href="https://github.com/dnvriend/akka-persistence-jdbc/blob/master/src/test/resources/h2-application.conf">this config file</a></p>
+<h2><a href="#h2-schema" name="h2-schema" class="anchor"><span class="anchor-link"></span></a>H2 schema</h2>
+<p>The schema is available <a href="https://github.com/dnvriend/akka-persistence-jdbc/blob/master/src/main/resources/schema/h2/h2-schema.sql">here</a></p>
+<h2><a href="#oracle-configuration" name="oracle-configuration" class="anchor"><span class="anchor-link"></span></a>Oracle configuration</h2>
+<p>Base your akka-persistence-jdbc <code>application.conf</code> on <a href="https://github.com/dnvriend/akka-persistence-jdbc/blob/master/src/test/resources/oracle-application.conf">this config file</a></p>
+<h2><a href="#oracle-schema" name="oracle-schema" class="anchor"><span class="anchor-link"></span></a>Oracle schema</h2>
+<p>The schema is available <a href="https://github.com/dnvriend/akka-persistence-jdbc/blob/master/src/main/resources/schema/oracle/oracle-schema.sql">here</a></p>
+<h2><a href="#how-to-get-the-readjournal-using-scala" name="how-to-get-the-readjournal-using-scala" class="anchor"><span class="anchor-link"></span></a>How to get the ReadJournal using Scala</h2>
+<p>The <code>ReadJournal</code> is retrieved via the <code>akka.persistence.query.PersistenceQuery</code> extension:</p>
+<pre class="prettyprint"><code class="language-scala">import akka.persistence.query.PersistenceQuery
+import akka.persistence.jdbc.query.scaladsl.JdbcReadJournal
+
+val readJournal: JdbcReadJournal = PersistenceQuery(system).readJournalFor[JdbcReadJournal](JdbcReadJournal.Identifier)
+</code></pre>
+<h2><a href="#how-to-get-the-readjournal-using-java" name="how-to-get-the-readjournal-using-java" class="anchor"><span class="anchor-link"></span></a>How to get the ReadJournal using Java</h2>
+<p>The <code>ReadJournal</code> is retrieved via the <code>akka.persistence.query.PersistenceQuery</code> extension:</p>
+<pre class="prettyprint"><code class="language-java">import akka.persistence.query.PersistenceQuery
+import akka.persistence.jdbc.query.javadsl.JdbcReadJournal
+
+final JdbcReadJournal readJournal = PersistenceQuery.get(system).getReadJournalFor(JdbcReadJournal.class, JdbcReadJournal.Identifier());
+</code></pre>
+<h2><a href="#persistence-query" name="persistence-query" class="anchor"><span class="anchor-link"></span></a>Persistence Query</h2>
+<p>The plugin supports the following queries:</p>
+<h2><a href="#allpersistenceidsquery-and-currentpersistenceidsquery" name="allpersistenceidsquery-and-currentpersistenceidsquery" class="anchor"><span class="anchor-link"></span></a>AllPersistenceIdsQuery and CurrentPersistenceIdsQuery</h2>
+<p><code>allPersistenceIds</code> and <code>currentPersistenceIds</code> are used for retrieving all persistenceIds of all persistent actors.</p>
+<pre class="prettyprint"><code class="language-scala">import akka.actor.ActorSystem
+import akka.stream.{Materializer, ActorMaterializer}
+import akka.stream.scaladsl.Source
+import akka.persistence.query.PersistenceQuery
+import akka.persistence.jdbc.query.scaladsl.JdbcReadJournal
+
+implicit val system: ActorSystem = ActorSystem()
+implicit val mat: Materializer = ActorMaterializer()(system)
+val readJournal: JdbcReadJournal = PersistenceQuery(system).readJournalFor[JdbcReadJournal](JdbcReadJournal.Identifier)
+
+val willNotCompleteTheStream: Source[String, NotUsed] = readJournal.allPersistenceIds()
+
+val willCompleteTheStream: Source[String, NotUsed] = readJournal.currentPersistenceIds()
+</code></pre>
+<p>The returned event stream is unordered and you can expect different order for multiple executions of the query.</p>
+<p>When using the <code>allPersistenceIds</code> query, the stream is not completed when it reaches the end of the currently used persistenceIds, but it continues to push new persistenceIds when new persistent actors are created.</p>
+<p>When using the <code>currentPersistenceIds</code> query, the stream is completed when the end of the current list of persistenceIds is reached, thus it is not a <code>live</code> query.</p>
+<p>The stream is completed with failure if there is a failure in executing the query in the backend journal.</p>
+<h2><a href="#eventsbypersistenceidquery-and-currenteventsbypersistenceidquery" name="eventsbypersistenceidquery-and-currenteventsbypersistenceidquery" class="anchor"><span class="anchor-link"></span></a>EventsByPersistenceIdQuery and CurrentEventsByPersistenceIdQuery</h2>
+<p><code>eventsByPersistenceId</code> and <code>currentEventsByPersistenceId</code> is used for retrieving events for a specific PersistentActor identified by persistenceId.</p>
+<pre class="prettyprint"><code class="language-scala">import akka.actor.ActorSystem
+import akka.stream.{Materializer, ActorMaterializer}
+import akka.stream.scaladsl.Source
+import akka.persistence.query.{ PersistenceQuery, EventEnvelope }
+import akka.persistence.jdbc.query.scaladsl.JdbcReadJournal
+
+implicit val system: ActorSystem = ActorSystem()
+implicit val mat: Materializer = ActorMaterializer()(system)
+val readJournal: JdbcReadJournal = PersistenceQuery(system).readJournalFor[JdbcReadJournal](JdbcReadJournal.Identifier)
+
+val willNotCompleteTheStream: Source[EventEnvelope, NotUsed] = readJournal.eventsByPersistenceId(&quot;some-persistence-id&quot;, 0L, Long.MaxValue)
+
+val willCompleteTheStream: Source[EventEnvelope, NotUsed] = readJournal.currentEventsByPersistenceId(&quot;some-persistence-id&quot;, 0L, Long.MaxValue)
+</code></pre>
+<p>You can retrieve a subset of all events by specifying <code>fromSequenceNr</code> and <code>toSequenceNr</code> or use <code>0L</code> and <code>Long.MaxValue</code> respectively to retrieve all events. Note that the corresponding sequence number of each event is provided in the <code>EventEnvelope</code>, which makes it possible to resume the stream at a later point from a given sequence number.</p>
+<p>The returned event stream is ordered by sequence number, i.e. the same order as the PersistentActor persisted the events. The same prefix of stream elements (in same order) are returned for multiple executions of the query, except for when events have been deleted.</p>
+<p>The stream is completed with failure if there is a failure in executing the query in the backend journal.</p>
+<h2><a href="#eventsbytag-and-currenteventsbytag" name="eventsbytag-and-currenteventsbytag" class="anchor"><span class="anchor-link"></span></a>EventsByTag and CurrentEventsByTag</h2>
+<p><code>eventsByTag</code> and <code>currentEventsByTag</code> are used for retrieving events that were marked with a given <code>tag</code>, e.g. all domain events of an Aggregate Root type.</p>
+<pre class="prettyprint"><code class="language-scala">import akka.actor.ActorSystem
+import akka.stream.{Materializer, ActorMaterializer}
+import akka.stream.scaladsl.Source
+import akka.persistence.query.{ PersistenceQuery, EventEnvelope }
+import akka.persistence.jdbc.query.scaladsl.JdbcReadJournal
+
+implicit val system: ActorSystem = ActorSystem()
+implicit val mat: Materializer = ActorMaterializer()(system)
+val readJournal: JdbcReadJournal = PersistenceQuery(system).readJournalFor[JdbcReadJournal](JdbcReadJournal.Identifier)
+
+val willNotCompleteTheStream: Source[EventEnvelope, NotUsed] = readJournal.eventsByTag(&quot;apple&quot;, 0L)
+
+val willCompleteTheStream: Source[EventEnvelope, NotUsed] = readJournal.currentEventsByTag(&quot;apple&quot;, 0L)
+</code></pre>
+<h2><a href="#tagging-events" name="tagging-events" class="anchor"><span class="anchor-link"></span></a>Tagging events</h2>
+<p>To tag events you&rsquo;ll need to create an <a href="http://doc.akka.io/docs/akka/current/scala/persistence.html#event-adapters-scala">Event Adapter</a> that will wrap the event in a <a href="http://doc.akka.io/api/akka/2.4.1/#akka.persistence.journal.Tagged">akka.persistence.journal.Tagged</a> class with the given tags. The <code>Tagged</code> class will instruct <code>akka-persistence-jdbc</code> to tag the event with the given set of tags.</p>
+<p>The persistence plugin will <strong>not</strong> store the <code>Tagged</code> class in the journal. It will strip the <code>tags</code> and <code>payload</code> from the <code>Tagged</code> class, and use the class only as an instruction to tag the event with the given tags and store the <code>payload</code> in the <code>message</code> field of the journal table.</p>
+<pre class="prettyprint"><code class="language-scala">import akka.persistence.journal.{ Tagged, WriteEventAdapter }
+import com.github.dnvriend.Person.{ LastNameChanged, FirstNameChanged, PersonCreated }
+
+class TaggingEventAdapter extends WriteEventAdapter {
+  override def manifest(event: Any): String = &quot;&quot;
+
+  def withTag(event: Any, tag: String) = Tagged(event, Set(tag))
+
+  override def toJournal(event: Any): Any = event match {
+    case _: PersonCreated ⇒
+      withTag(event, &quot;person-created&quot;)
+    case _: FirstNameChanged ⇒
+      withTag(event, &quot;first-name-changed&quot;)
+    case _: LastNameChanged ⇒
+      withTag(event, &quot;last-name-changed&quot;)
+    case _ ⇒ event
+  }
+}
+</code></pre>
+<p>The <code>EventAdapter</code> must be registered by adding the following to the root of <code>application.conf</code> Please see the <a href="https://github.com/dnvriend/demo-akka-persistence-jdbc">demo-akka-persistence-jdbc</a> project for more information.</p>
+<pre class="prettyprint"><code class="language-bash">jdbc-journal {
+  event-adapters {
+    tagging = &quot;com.github.dnvriend.TaggingEventAdapter&quot;
+  }
+  event-adapter-bindings {
+    &quot;com.github.dnvriend.Person$PersonCreated&quot; = tagging
+    &quot;com.github.dnvriend.Person$FirstNameChanged&quot; = tagging
+    &quot;com.github.dnvriend.Person$LastNameChanged&quot; = tagging
+  }
+}
+</code></pre>
+<p>You can retrieve a subset of all events by specifying offset, or use 0L to retrieve all events with a given tag. The offset corresponds to an ordered sequence number for the specific tag. Note that the corresponding offset of each event is provided in the EventEnvelope, which makes it possible to resume the stream at a later point from a given offset.</p>
+<p>In addition to the offset the EventEnvelope also provides persistenceId and sequenceNr for each event. The sequenceNr is the sequence number for the persistent actor with the persistenceId that persisted the event. The persistenceId + sequenceNr is an unique identifier for the event.</p>
+<p>The returned event stream contains only events that correspond to the given tag, and is ordered by the creation time of the events. The same stream elements (in same order) are returned for multiple executions of the same query. Deleted events are not deleted from the tagged event stream.</p>
+<h2><a href="#custom-dao-implementation" name="custom-dao-implementation" class="anchor"><span class="anchor-link"></span></a>Custom DAO Implementation</h2>
+<p>The plugin supports loading a custom DAO for the journal and snapshot. You should implement a custom Data Access Object (DAO) if you wish to alter the default persistency strategy in any way, but wish to reuse all the logic that the plugin already has in place, eg. the Akka Persistence Query API. For example, the default persistency strategy that the plugin supports serializes journal and snapshot messages using a serializer of your choice and stores them as byte arrays in the database.</p>
+<p>By means of configuration in <code>application.conf</code> a DAO can be configured, below the default DAOs are shown:</p>
+<pre class="prettyprint"><code class="language-bash">jdbc-journal {
+  dao = &quot;akka.persistence.jdbc.dao.bytea.journal.ByteArrayJournalDao&quot;
+}
+
+jdbc-snapshot-store {
+  dao = &quot;akka.persistence.jdbc.dao.bytea.snapshot.ByteArraySnapshotDao&quot;
+}
+
+jdbc-read-journal {
+  dao = &quot;akka.persistence.jdbc.dao.bytea.readjournal.ByteArrayReadJournalDao&quot;
+}
+</code></pre>
+<p>Storing messages as byte arrays in blobs is not the only way to store information in a database. For example, you could store messages with full type information as a normal database rows, each event type having its own table. For example, implementing a Journal Log table that stores all persistenceId, sequenceNumber and event type discriminator field, and storing the event data in another table with full typing</p>
+<p>You only have to implement two interfaces <code>akka.persistence.jdbc.dao.JournalDao</code> and/or <code>akka.persistence.jdbc.dao.SnapshotDao</code>. As these APIs are only now exposed for public use, the interfaces may change when the API needs to change for whatever reason.</p>
+<p>For example, take a look at the following two custom DAOs:</p>
+<pre class="prettyprint"><code class="language-scala">class MyCustomJournalDao(db: Database, val profile: JdbcProfile, journalConfig: JournalConfig, serialization: Serialization)(implicit ec: ExecutionContext, mat: Materializer) extends JournalDao {
+    // snip
+}
+
+class MyCustomSnapshotDao(db: JdbcBackend#Database, val profile: JdbcProfile, snapshotConfig: SnapshotConfig, serialization: Serialization)(implicit ec: ExecutionContext, val mat: Materializer) extends SnapshotDao {
+    // snip
+}
+</code></pre>
+<p>As you can see, the custom DAOs get a <em>Slick database</em>, a <em>Slick profile</em>, the journal or snapshot <em>configuration</em>, an <em>akka.serialization.Serialization</em>, an <em>ExecutionContext</em> and <em>Materializer</em> injected after constructed. You should register the Fully Qualified Class Name in <code>application.conf</code> so that the custom DAOs will be used.</p>
+<p>For more information please review the two default implementations <code>akka.persistence.jdbc.dao.bytea.journal.ByteArrayJournalDao</code> and <code>akka.persistence.jdbc.dao.bytea.snapshot.ByteArraySnapshotDao</code> or the demo custom DAO example from the <a href="https://github.com/dnvriend/demo-akka-persistence-jdbc">demo-akka-persistence</a> site.</p>
+<h2><a href="#explicitly-shutting-down-the-database-connections" name="explicitly-shutting-down-the-database-connections" class="anchor"><span class="anchor-link"></span></a>Explicitly shutting down the database connections</h2>
+<p>The plugin automatically shuts down the HikariCP connection pool only when the ActorSystem is explicitly terminated. It is advisable to register a shutdown hook to be run when the VM exits that terminates the ActorSystem:</p>
+<pre class="prettyprint"><code class="language-scala">sys.addShutdownHook(system.terminate())
+</code></pre>
+<h1><a href="#some-videos-about-akka-persistence-streams-and-event-sourcing" name="some-videos-about-akka-persistence-streams-and-event-sourcing" class="anchor"><span class="anchor-link"></span></a>Some videos about Akka Persistence, streams and Event Sourcing</h1>
+<p>Is Event Sourcing getting traction? I would say so:</p>
+<ul>
+  <li><a href="https://www.youtube.com/watch?v=x62K4ObBtw4">Konrad Malawski - Akka Streams &amp; Reactive Streams in action (2016)</a></li>
+  <li><a href="https://www.youtube.com/watch?v=qqNsGomfabc">Björn Antonsson &amp; Konrad Malawski - Resilient Applications with Akka Persistence (2016)</a></li>
+  <li><a href="https://www.youtube.com/watch?v=Oc9lHVVn1YQ">Aleksei Irbe - Akka persistence (2016)</a></li>
+  <li><a href="https://www.youtube.com/watch?v=kZL41SMXWdM">Greg Young - Event Sourcing is actually just functional code (2016)</a></li>
+  <li><a href="https://www.youtube.com/watch?v=LDW0QWie21s">Greg Young — A Decade of DDD, CQRS, Event Sourcing (2016)</a></li>
+  <li><a href="https://www.youtube.com/watch?v=QwsA8hkNGOA">Packt - Introduction to Akka Persistence (2016)</a></li>
+  <li><a href="https://www.youtube.com/watch?v=1rFY2SfdDoE">Paweł Szulc - Event Sourcing &amp; Functional Programming - a pair made in heaven (2016)</a></li>
+  <li><a href="https://www.youtube.com/watch?v=Mg5ZmoMddJI">Konrad Malawski - Akka and the Zen of Reactive System Design (2016)</a></li>
+  <li><a href="https://www.youtube.com/watch?v=fQkKu4tTgCE">Renato Cavalcanti - Field guide to DDD/CQRS using the Scala Type System and Akka (2015)</a></li>
+  <li><a href="https://www.youtube.com/watch?v=K4FY0XKediU">Martin Zapletal: Data in Motion - Streaming Static Data Efficiently in Akka Persistence (2016)</a></li>
+  <li><a href="https://www.youtube.com/watch?v=vFVry457XLk">Martin Krasser - Event Sourcing and CQRS with Akka Persistence and Eventuate (2015)</a></li>
+  <li><a href="https://www.youtube.com/watch?v=uA2AsZW0I7A">Duncan DeVore - CQRS/ES with Scala and Akka Persistence (2015)</a></li>
+  <li><a href="https://www.youtube.com/watch?v=gvsRl6xZiiE">Sander Mak - Event-Sourced Architectures with Akka (2015)</a></li>
+  <li><a href="https://www.youtube.com/watch?v=yAI71_smS34">Sidharth Khattri - Akka Persistence | Event Sourcing (2015)</a></li>
+  <li><a href="https://www.youtube.com/watch?v=iKTFalVfoSU">Michał Płachta - Building multiplayer game using Reactive Streams</a></li>
+  <li><a href="https://www.youtube.com/watch?v=r5lecCBazvE">Patrik Nordwall - Intro to Akka persistence (2014)</a></li>
+  <li><a href="https://www.youtube.com/watch?v=8JKjvY4etTY">Greg Young - Event Sourcing(2014)</a></li>
+</ul>
+<h2><a href="#whats-new-" name="whats-new-" class="anchor"><span class="anchor-link"></span></a>What&rsquo;s new?</h2>
+<h2><a href="#2-6-8-2016-11-03-" name="2-6-8-2016-11-03-" class="anchor"><span class="anchor-link"></span></a>2.6.8 (2016-11-03)</h2>
+<ul>
+  <li>Akka 2.4.10 -&gt; 2.4.12</li>
+  <li>Fixed &lsquo;Snapshot storage BLOB handling&rsquo; by <a href="https://github.com/skisel">Sergey Kisel</a>, thanks!</li>
+  <li>Filter out events that have already been deleted.</li>
+  <li>Removed the <em>non-official</em> and <strong>never-to-be-used</strong> bulk loading interface.</li>
+  <li>Support for the new queries <code>CurrentEventsByTagQuery2</code> and <code>EventsByTagQuery2</code>, please read the akka-persistence-query documentation to see what has changed.</li>
+  <li>The akka-persistence-jdbc plugin only supports the <code>akka.persistence.query.NoOffset</code> and the <code>akka.persistence.query.Sequence</code> offset types.</li>
+  <li>There is no support for the <code>akka.persistence.query.TimeBasedUUID</code> offset type. When used, akka-persistence-jdbc will throw an IllegalArgumentException if offered to the read-journal.</li>
+</ul>
+<h2><a href="#2-6-7-2016-09-07-" name="2-6-7-2016-09-07-" class="anchor"><span class="anchor-link"></span></a>2.6.7 (2016-09-07)</h2>
+<ul>
+  <li>Merged PR #75 <a href="https://github.com/jroper">jroper</a> - Removed binary dependency on slick-extensions, thanks!</li>
+  <li>Please note, slick-extensions 3.1.0 are open source, but the license didn&rsquo;t change, so you cannot use it for free, you still need a <a href="https://www.lightbend.com/platform/subscription">Lightbend Subscription</a>.</li>
+  <li>Akka 2.4.9 -&gt; 2.4.10</li>
+</ul>
+<h2><a href="#2-6-6-2016-08-22-" name="2-6-6-2016-08-22-" class="anchor"><span class="anchor-link"></span></a>2.6.6 (2016-08-22)</h2>
+<ul>
+  <li>Merged PR #66 <a href="https://github.com/monktastic">monktastic</a>, eventsByPersistenceId should terminate when toSequenceNr is reached, thanks!</li>
+</ul>
+<h2><a href="#2-6-5-2016-08-20-" name="2-6-5-2016-08-20-" class="anchor"><span class="anchor-link"></span></a>2.6.5 (2016-08-20)</h2>
+<ul>
+  <li>Akka 2.4.9-RC2 -&gt; 2.4.9</li>
+</ul>
+<h2><a href="#2-6-5-rc2-2016-08-06-" name="2-6-5-rc2-2016-08-06-" class="anchor"><span class="anchor-link"></span></a>2.6.5-RC2 (2016-08-06)</h2>
+<ul>
+  <li>Akka 2.4.9-RC1 -&gt; 2.4.9-RC2</li>
+</ul>
+<h2><a href="#2-6-5-rc1-2016-08-03-" name="2-6-5-rc1-2016-08-03-" class="anchor"><span class="anchor-link"></span></a>2.6.5-RC1 (2016-08-03)</h2>
+<ul>
+  <li>Akka 2.4.8 -&gt; 2.4.9-RC1</li>
+</ul>
+<h2><a href="#2-6-4-2016-07-30-" name="2-6-4-2016-07-30-" class="anchor"><span class="anchor-link"></span></a>2.6.4 (2016-07-30)</h2>
+<ul>
+  <li>Merged PR #62 <a href="https://github.com/jtysper">jtysper</a>, Fix Oracle support, thanks!</li>
+</ul>
+<h2><a href="#2-6-3-2016-07-27-" name="2-6-3-2016-07-27-" class="anchor"><span class="anchor-link"></span></a>2.6.3 (2016-07-27)</h2>
+<ul>
+  <li>Merged PR #61 <a href="https://github.com/rockjam">Nikolay Tatarinov</a>, Sql optimizations, thanks!</li>
+</ul>
+<h2><a href="#2-6-2-2016-07-26-" name="2-6-2-2016-07-26-" class="anchor"><span class="anchor-link"></span></a>2.6.2 (2016-07-26)</h2>
+<ul>
+  <li>Fix for issue #60 where an immutable.Vector was trying to be matched by the serializer in TrySeq stage.</li>
+</ul>
+<h2><a href="#2-6-1-2016-07-23-" name="2-6-1-2016-07-23-" class="anchor"><span class="anchor-link"></span></a>2.6.1 (2016-07-23)</h2>
+<ul>
+  <li>
+  <p>Support for the <strong>non-official</strong> bulk loading interface <a href="https://github.com/dnvriend/akka-persistence-query-writer/blob/master/src/main/scala/akka/persistence/query/scaladsl/EventWriter.scala">akka.persistence.query.scaladsl.EventWriter</a> added. I need this interface to load massive amounts of data, that will be processed by many actors, but initially I just want to create and store one or more events belonging to an actor, that will handle the business rules eventually. Using actors or a shard region for that matter, just gives to much actor life cycle overhead ie. too many calls to the data store. The <code>akka.persistence.query.scaladsl.EventWriter</code> interface is non-official and puts all responsibility of ensuring the integrity of the journal on you. This means when some strange things are happening caused by wrong loading of the data, and therefore breaking the integrity and ruleset of akka-persistence, all the responsibility on fixing it is on you, and not on the Akka team.</p></li>
+  <li>
+  <p>2.6.0 (2016-07-17)</p></li>
+  <li>Removed the <code>deleted_to</code> and <code>created</code> columns of the <code>journal</code> table to become compatible with  <code>akka-persistence-query</code> spec that states that all messages should be replayed, even deleted ones</li>
+  <li>New schema&rsquo;s are available for <a href="https://github.com/dnvriend/akka-persistence-jdbc/blob/master/src/main/resources/schema/postgres/postgres-schema.sql">postgres</a>, <a href="https://github.com/dnvriend/akka-persistence-jdbc/blob/master/src/main/resources/schema/mysql/mysql-schema.sql">mysql</a> and <a href="https://github.com/dnvriend/akka-persistence-jdbc/blob/master/src/main/resources/schema/h2/h2-schema.sql">h2</a></li>
+  <li>No need for Query Publishers with the new akka-streams API</li>
+  <li>Codacy code cleanup</li>
+  <li>There is still no support for Oracle since the addition of the ordering SERIAL column which Oracle does not support. Help to add Oracle support is appreciated.</li>
+  <li>
+  <p>2.5.2 (2016-07-03)</p></li>
+  <li>The <code>eventsByTag</code> query should now be fixed.</li>
+  <li>
+  <p>2.5.1 (2016-07-03)</p></li>
+  <li>There is no 2.5.1; error while releasing</li>
+  <li>
+  <p>2.5.0 (2016-06-29)</p></li>
+  <li>Changed the database schema to include two new columns, an <code>ordering</code> and a <code>deleted</code> column. Both fields are needed to support the akka-persistence-query API. The <code>ordering</code> column is needed to register the total ordering of events an is used for the offset for both <code>*byTag</code> queries. The deleted column is not yet used.</li>
+  <li>Known issue: will not work on Oracle (yet).</li>
+  <li>
+  <p>2.4.1 (2016-06-20)</p></li>
+  <li>Merged PR #57 <a href="https://github.com/fcristovao">Filipe Cristóvão</a>, Added support for the H2 database, thanks!</li>
+  <li>
+  <p>2.4.0 (2016-06-19)</p></li>
+  <li>Merged PR #55 <a href="https://github.com/fcristovao">Filipe Cristóvão</a>, Redesign of the serializer/deserializer to make it possible to override it to implement your own serialization strategy, thanks!</li>
+  <li>This is potentially a breaking change for users that implement there own DAO or extend and override some of the features of the default one:
+    <ol>
+      <li>The DAO package has been change from <code>akka.persistence.jdbc.dao.bytea</code> to <code>akka.persistence.jdbc.dao.bytea.journal</code></li>
+      <li>The DAOs constructor has changed from (db: Database, profile: JdbcProfile, cfg: JournalConfig) to (db: Database, profile: JdbcProfile, cfg: JournalConfig, serialization: Serialization), so it gets the akka.serialization.Serialization injected.</li>
+    </ol>
+  </li>
+  <li>Removed the <code>jdbc-journal.serialization</code>, <code>jdbc-snapshot-store.serialization</code> and <code>jdbc-read-journal.serialization</code> setting as the DAOs have to implement their own serialization strategy.</li>
+  <li>The following interfaces <code>akka.persistence.jdbc.dao.JournalDao</code>, <code>akka.persistence.jdbc.dao.ReadJournalDao</code> and <code>akka.persistence.jdbc.dao.SnapshotDao</code> have been changed as the DAOs have to implement their own strategy, they&rsquo;ll have to work with <code>AtomicWrite</code>, <code>PersistentRepr</code> and <code>Any</code> as types.</li>
+  <li>
+  <p>2.3.3 (2016-06-13)</p></li>
+  <li>Fix for the async query <code>eventsByTag</code> that failed when using an Oracle database.</li>
+  <li>
+  <p>2.3.2 (2016-06-12)</p></li>
+  <li>This release has a configuration how the the slick database driver gets resolved. The following driver names must be used:
+    <ul>
+      <li><code>slick.driver.PostgresDriver$</code></li>
+      <li><code>slick.driver.MySQLDriver$</code></li>
+      <li><code>com.typesafe.slick.driver.oracle.OracleDriver$</code></li>
+    </ul>
+  </li>
+  <li>The journal, snapshot and readjournal plugins now all use defaults as stated in the reference.conf, it is not necessary to define properties when using a plugin-id that has not been defined in reference.conf</li>
+  <li>
+  <p>2.3.1 (2016-06-10)</p></li>
+  <li>Async queries should take a max number of elements from the result set according to the  <code>jdbc-read-journal.max-buffer-size</code> configuration. This should result in better memory usage and better IO performance.</li>
+  <li>
+  <p>2.3.0 (2016-06-10)</p></li>
+  <li>This is a feature, configuration and (maybe) API breaking release when you rely on the DAO&rsquo;s, my apologies.</li>
+  <li>Killed some [feature-creep], this will result in a better design of the plugin.
+    <ul>
+      <li>Removed support for the Varchar (base64/text based serialization),</li>
+      <li>Removed support for the in-memory storage, please use the <a href="https://github.com/dnvriend/akka-persistence-inmemory">akka.persistence-inmemory</a> plugin,</li>
+      <li>Removed the queries <code>eventsByPersistenceIdAndTag</code> and <code>currentEventsByPersistenceIdAndTag</code> as they are not supported by Akka natively and can be configured by filtering the event stream.</li>
+    </ul>
+  </li>
+  <li>Implemented async queries, fixes issue #53 All async queries do not work as expected</li>
+  <li>Implemented akka persistence plugin scoping strategy, fixes issue #42 Make it possible to have multiple instances of the plugin (configured differently)</li>
+  <li>
+  <p>2.2.25 (2016-06-08)</p></li>
+  <li>Merged PR #54 <a href="https://github.com/charithe">Charith Ellawala</a> Honour the schemaName setting for the snapshot table, thanks!</li>
+  <li>Compiling for Java 8 as Akka 2.4.x dropped support for Java 6 and 7 and only works on Java 8 and above</li>
+  <li>
+  <p>2.2.24 (2016-06-05)</p></li>
+  <li>Akka 2.4.6 -&gt; 2.4.7</li>
+  <li>
+  <p>2.2.23 (2016-05-25)</p></li>
+  <li>Akka 2.4.5 -&gt; 2.4.6</li>
+  <li>
+  <p>2.2.22 (2016-05-18)</p></li>
+  <li>Merged PR #52 <a href="https://github.com/gopalsaob">Gopal Shah</a> for issue <a href="https://github.com/dnvriend/akka-persistence-jdbc/issues/51">#44 - Unable to differentiate between persistence failures and serialization issues</a>, thanks!</li>
+  <li>Akka 2.4.4 -&gt; 2.4.5</li>
+  <li>
+  <p>2.2.21 (2016-04-30)</p></li>
+  <li>Disabled the default dependency on HikariCP-Java6 v2.3.7,</li>
+  <li>Added dependency on HikariCP v2.4.6 for better performance and bug fixes</li>
+  <li>
+  <p>2.2.20 (2016-04-29)</p></li>
+  <li>Merged PR #50 <a href="https://github.com/prettynatty">Andrey Kouznetsov</a> for issue <a href="https://github.com/dnvriend/akka-persistence-jdbc/issues/44">#44 - Leaking connections</a>, thanks!</li>
+  <li>
+  <p>2.2.19 (2016-04-26)</p></li>
+  <li>Merged PR #46 <a href="https://github.com/prettynatty">Andrey Kouznetsov</a> Significant performance boost by using compiled queries, thanks!</li>
+  <li>Merged PR #47 <a href="https://github.com/prettynatty">Andrey Kouznetsov</a> Ability to get Database instance from JNDI, thanks!</li>
+  <li><strong><em>Disable the async queries as they are implemented very sketchy, please use the synchronous query API with client side polling.</em></strong></li>
+  <li>
+  <p>2.2.18 (2016-04-19)</p></li>
+  <li>Text based serialization formats</li>
+  <li>
+  <p>2.2.17 (2016-04-14)</p></li>
+  <li>Fix for <a href="https://github.com/dnvriend/akka-persistence-jdbc/issues/41">Issue #41 - Provide a way to shut-down connections explicitly</a>, the database connections will be automatically shut down when the ActorSystem shuts down when calling <code>system.terminate()</code> in which <code>system</code> is the ActorSystem instance.</li>
+  <li>Akka 2.4.3 -&gt; 2.4.4</li>
+  <li>
+  <p>2.2.16 (2016-04-01)</p></li>
+  <li>Akka 2.4.2 -&gt; 2.4.3</li>
+  <li>
+  <p>2.2.15 (2016-03-18)</p></li>
+  <li>Merged PR #37 <a href="https://github.com/wwwiiilll">William Turner</a> Make offset sequential on eventsByTag queries, thanks!</li>
+  <li>
+  <p>2.2.14 (2016-03-17)</p></li>
+  <li>Determine events where appropriate by using an offset using the query api was not tested and thus the implementation was incorrect. This has been corrected and the documentation altered where appropriate.</li>
+  <li>
+  <p>2.2.13 (2016-03-17)</p></li>
+  <li>Release to enable Bintray to sync with JCenter, so no big changes here</li>
+  <li>
+  <p>2.2.12 (2016-03-17)</p></li>
+  <li>Added the appropriate Maven POM resources to be publishing to Bintray&rsquo;s JCenter</li>
+  <li>Refactored the akka-persistence-query interfaces, integrated it back again in one jar, for jcenter deployment simplicity</li>
+  <li>
+  <p>2.2.11 (2016-03-09)</p></li>
+  <li>Journal and SnapshotDAO implementation are configurable, when you need to implement your own persistency strategy,</li>
+  <li>Enable/Disable Serialization, the default journal and snapshot DAO rely on serialization, only disable when you known what you are doing,</li>
+  <li>Scala 2.11.7 -&gt; 2.11.8</li>
+  <li>
+  <p>2.2.10 (2016-03-04)</p></li>
+  <li>Fix for parsing the schema name configuration for the <code>deleted_to</code> and <code>snapshot</code> table configuration.</li>
+  <li>
+  <p>2.2.9 (2016-03-03)</p></li>
+  <li>Fix for propagating serialization errors to akka-persistence so that any error regarding the persistence of messages will be handled by the callback handler of the Persistent Actor; <code>onPersistFailure</code>.</li>
+  <li>
+  <p>2.2.8 (2016-02-18)</p></li>
+  <li>Added InMemory option for journal and snapshot storage, for testing</li>
+  <li>
+  <p>2.2.7 (2016-02-17)</p></li>
+  <li>Akka 2.4.2-RC3 -&gt; 2.4.2</li>
+  <li>
+  <p>2.2.6 (2016-02-13)</p></li>
+  <li>akka-persistence-jdbc-query 1.0.0 -&gt; 1.0.1</li>
+  <li>
+  <p>2.2.5 (2016-02-13)</p></li>
+  <li>Akka 2.4.2-RC2 -&gt; 2.4.2-RC3</li>
+  <li>
+  <p>2.2.4 (2016-02-08)</p></li>
+  <li>Compatibility with Akka 2.4.2-RC2</li>
+  <li>Refactored the akka-persistence-query extension interfaces to its own jar: <code>&quot;com.github.dnvriend&quot; %% &quot;akka-persistence-jdbc-query&quot; % &quot;1.0.0&quot;</code></li>
+  <li>
+  <p>2.2.3 (2016-01-29)</p></li>
+  <li>Refactored the akka-persistence-query package structure. It wasn&rsquo;t optimized for use with javadsl. Now the name of the ReadJournal is <code>JdbcReadJournal</code> for both Java and Scala, only the package name has been changed to reflect which language it is for.</li>
+  <li><strong>Scala:</strong> akka.persistence.jdbc.query.journal.<code>scaladsl</code>.JdbcReadJournal</li>
+  <li><strong>Java:</strong> akka.persistence.jdbc.query.journal.<code>javadsl</code>.JdbcReadJournal</li>
+  <li>
+  <p>2.2.2 (2016-01-28)</p></li>
+  <li>Support for looking up DataSources using JNDI</li>
+  <li>
+  <p>2.2.1 (2016-01-28)</p></li>
+  <li>Support for the akka persistence query JavaDSL</li>
+  <li>
+  <p>2.2.0 (2016-01-26)</p></li>
+  <li>Compatibility with Akka 2.4.2-RC1</li>
+  <li>
+  <p>2.1.2 (2016-01-25)</p></li>
+  <li>Support for the <code>currentEventsByPersistenceIdAndTag</code> and <code>eventsByPersistenceIdAndTag</code> queries</li>
+  <li>
+  <p>2.2.1 (2016-01-24)</p></li>
+  <li>Support for the <code>eventsByTag</code> live query</li>
+  <li>Tags are now separated by a character, and not by a tagPrefix</li>
+  <li>Please note the configuration change.</li>
+  <li>
+  <p>2.1.0 (2016-01-24)</p></li>
+  <li>Support for the <code>currentEventsByTag</code> query, the tagged events will be sorted by event sequence number.</li>
+  <li>Table column names are configurable.</li>
+  <li>Schema change for the journal table, added two columns, <code>tags</code> and <code>created</code>, please update your schema.</li>
+  <li>
+  <p>2.0.4 (2016-01-22)</p></li>
+  <li>Using the typesafe config for the Slick database configuration,</li>
+  <li>Uses HikariCP as the connection pool,</li>
+  <li>Table names and schema names are configurable,</li>
+  <li>Akka Stream 2.0.1 -&gt; 2.0.1</li>
+  <li>Tested with Oracle XE</li>
+  <li>
+  <p>2.0.3 (2016-01-18)</p></li>
+  <li>Optimization for the <code>eventsByPersistenceId</code> and <code>allPersistenceIds</code> queries.</li>
+  <li>
+  <p>2.0.2 (2016-01-17)</p></li>
+  <li>Support for the <code>eventsByPersistenceId</code> live query</li>
+  <li>
+  <p>2.0.1 (2016-01-17)</p></li>
+  <li>Support for the <code>allPersistenceIds</code> live query</li>
+  <li>
+  <p>2.0.0 (2016-01-16)</p></li>
+  <li>A complete rewrite using <a href="http://slick.typesafe.com/">slick</a> as the database backend, breaking backwards compatibility in a big way.</li>
+  <li>
+  <p>1.2.2 (2015-10-14) - Akka v2.4.x</p></li>
+  <li>Merged PR #28 <a href="https://github.com/prettynatty">Andrey Kouznetsov</a> Removing Unused ExecutionContext, thanks!</li>
+  <li>
+  <p>1.2.1 (2015-10-12)</p></li>
+  <li>Merged PR #27 <a href="https://github.com/prettynatty">Andrey Kouznetsov</a> don&rsquo;t fail on asyncWrite with empty messages, thanks!</li>
+  <li>
+  <p>1.2.0 (2015-10-02)</p></li>
+  <li>Compatibility with Akka 2.4.0</li>
+  <li>Akka 2.4.0-RC3 -&gt; 2.4.0</li>
+  <li>scalikejdbc 2.2.7 -&gt; 2.2.8</li>
+  <li>No obvious optimalizations are applied, and no schema refactorings are needed (for now)</li>
+  <li>Fully backwards compatible with akka-persistence-jdbc v1.1.8&rsquo;s schema and configuration</li>
+  <li>
+  <p>1.2.0-RC3 (2015-09-17)</p></li>
+  <li>Compatibility with Akka 2.4.0-RC3</li>
+  <li>No obvious optimalizations are applied, and no schema refactorings are needed (for now)</li>
+  <li>Please note; schema, serialization (strategy) and code refactoring will be iteratively applied on newer release of the 2.4.0-xx branch, but for each step, a migration guide and SQL scripts will be made available.</li>
+  <li>Use the following library dependency: &ldquo;com.github.dnvriend&rdquo; %% &ldquo;akka-persistence-jdbc&rdquo; % &ldquo;1.2.0-RC3&rdquo;</li>
+  <li>Fully backwards compatible with akka-persistence-jdbc v1.1.8&rsquo;s schema and configuration</li>
+  <li>
+  <p>1.2.0-RC2 (2015-09-07)</p></li>
+  <li>Compatibility with Akka 2.4.0-RC2</li>
+  <li>No obvious optimalizations are applied, and no schema refactorings are needed (for now)</li>
+  <li>Please note; schema, serialization (strategy) and code refactoring will be iteratively applied on newer release of the 2.4.0-xx branch, but for each step, a migration guide and SQL scripts will be made available.</li>
+  <li>Use the following library dependency: &ldquo;com.github.dnvriend&rdquo; %% &ldquo;akka-persistence-jdbc&rdquo; % &ldquo;1.2.0-RC2&rdquo;</li>
+  <li>Fully backwards compatible with akka-persistence-jdbc v1.1.8&rsquo;s schema and configuration</li>
+  <li>
+  <p>1.1.9 (2015-10-12) - Akka v2.3.x</p></li>
+  <li>scala 2.10.5 -&gt; 2.10.6</li>
+  <li>akka 2.3.13 -&gt; 2.3.14</li>
+  <li>scalikejdbc 2.2.7 -&gt; 2.2.8</li>
+  <li>
+  <p>1.1.8 (2015-09-04)</p></li>
+  <li>Compatibility with Akka 2.3.13</li>
+  <li>Akka 2.3.12 -&gt; 2.3.13</li>
+  <li>
+  <p>1.1.7 (2015-07-13)</p></li>
+  <li>Scala 2.11.6 -&gt; 2.11.7</li>
+  <li>Akka 2.3.11 -&gt; 2.3.12</li>
+  <li>ScalaTest 2.1.4 -&gt; 2.2.4</li>
+  <li>
+  <p>1.1.6 (2015-06-22)</p></li>
+  <li>ScalikeJdbc 2.2.6 -&gt; 2.2.7</li>
+  <li>Issue #22 <code>persistenceId</code> missing in <code>JournalTypeConverter.unmarshal(value: String)</code> signature; added a second parameter <code>persistenceId: String</code>, note this breaks the serialization API.</li>
+  <li>
+  <p>1.1.5 (2015-05-12)</p></li>
+  <li>Akka 2.3.10 -&gt; 2.3.11</li>
+  <li>MySQL snapshot statement now uses <code>INSERT INTO .. ON DUPLICATE UPDATE</code> for <code>upserts</code></li>
+  <li>Merged Issue #21 <a href="https://github.com/mwkohout">mwkohout</a> Use a ParameterBinder to pass snapshot into the merge statement and get rid of the stored procedure, thanks!</li>
+  <li>
+  <p>1.1.4 (2015-05-06)</p></li>
+  <li>ScalikeJDBC 2.2.5 -&gt; 2.2.6</li>
+  <li>Akka 2.3.9 -&gt; 2.3.10</li>
+  <li>Switched back to a Java 7 binary, to support Java 7 and higher based projects, we need a strategy though when <a href="http://www.scala-lang.org/news/2.12-roadmap">Scala 2.12</a> will be released.</li>
+  <li>Merged Issue #20 <a href="https://github.com/mwkohout">mwkohout</a> Use apache commons codec Base64 vs the java8-only java.util.Base64 for Java 7 based projects, thanks!</li>
+  <li>
+  <p>1.1.3 (2015-04-15)</p></li>
+  <li>ScalikeJDBC 2.2.4 -&gt; 2.2.5</li>
+  <li>Fixed: &lsquo;OutOfMemory error when recovering with a large number of snapshots #17&rsquo;</li>
+  <li>
+  <p>1.1.2 (2015-03-21)</p></li>
+  <li>Initial support for a pluggable serialization architecture. Out of the box the plugin uses the  <code>Base64JournalConverter</code> and <code>Base64SnapshotConverter</code> as serializers. For more information  see the <a href="https://github.com/dnvriend/akka-persistence-jdbc-play">akka-persistence-jdbc-play</a> example  project that uses its own JSON serialization format to write journal entries to the data store.</li>
+  <li>
+  <p>1.1.1 (2015-03-17)</p></li>
+  <li>ScalikeJDBC 2.2.2 -&gt; 2.2.4</li>
+  <li>Java 8 binary, so it needs Java 8, you still use Java 6 or 7, upgrade! :P</li>
+  <li>Using the much faster Java8 java.util.Base64 encoder/decoder</li>
+  <li>Bulk insert for journal entries (non-oracle only, sorry)</li>
+  <li>Initial support for JNDI, needs testing though</li>
+  <li>Merged <a href="https://github.com/romusz">Paul Roman</a> Fix typo in journal log message #14, thanks!</li>
+  <li>Merged <a href="https://github.com/bpg">Pavel Boldyrev</a> Fix MS SQL Server support #15 (can not test it though, needs Vagrant), thanks!</li>
+  <li>
+  <p>1.1.0</p></li>
+  <li>Merged <a href="https://github.com/bpg">Pavel Boldyrev</a> Fix Oracle SQL <code>MERGE</code> statement usage #13 which fixes issue #9 (java.sql.SQLRecoverableException: No more data to read from socket #9), thanks!</li>
+  <li>Change to the Oracle schema, it needs a stored procedure definition.</li>
+  <li>
+  <p>1.0.9 (2015-01-20)</p></li>
+  <li>ScalikeJDBC 2.1.2 -&gt; 2.2.2</li>
+  <li>Merged <a href="https://github.com/miguel-vila">miguel-vila</a> Adds ´validationQuery´ configuration parameter #10, thanks!</li>
+  <li>Removed Informix support: I just don&rsquo;t have a working Informix docker image (maybe someone can create one and publish it?)</li>
+  <li>
+  <p>1.0.8</p></li>
+  <li>ScalikeJDBC 2.1.1 -&gt; 2.1.2</li>
+  <li>Moved to bintray</li>
+  <li>
+  <p>1.0.7 (2014-09-16)</p></li>
+  <li>Merged <a href="https://github.com/mwkohout">mwkohout</a> fix using Oracle&rsquo;s MERGE on issue #3, thanks!</li>
+  <li>
+  <p>1.0.6</p></li>
+  <li>Fixed - Issue3: Handling save attempts with duplicate snapshot ids and persistence ids</li>
+  <li>Fixed - Issue5: Connection pool is being redefined when using journal and snapshot store</li>
+  <li>
+  <p>1.0.5 (2014-08-26)</p></li>
+  <li>Akka 2.3.5 -&gt; 2.3.6</li>
+  <li>ScalikeJDBC 2.1.0 -&gt; 2.1.1</li>
+  <li>
+  <p>1.0.4</p></li>
+  <li>Added schema name configuration for the journal and snapshot</li>
+  <li>Added table name configuration for the journal and snapshot</li>
+  <li>ScalikeJDBC 2.0.5 -&gt; 2.1.0</li>
+  <li>Akka 2.3.4 -&gt; 2.3.5</li>
+  <li>
+  <p>1.0.3 (2014-07-23)</p></li>
+  <li>IBM Informix 12.10 supported</li>
+  <li>
+  <p>1.0.2</p></li>
+  <li>Oracle XE 11g supported</li>
+  <li>
+  <p>1.0.1</p></li>
+  <li>scalikejdbc 2.0.4 -&gt; 2.0.5</li>
+  <li>akka-persistence-testkit 0.3.3 -&gt; 0.3.4</li>
+  <li>
+  <p>1.0.0 (2014-07-03)</p></li>
+  <li>Release to Maven Central</li>
+  <li>
+  <p>0.0.6</p></li>
+  <li>Tested against MySQL/5.6.19 MySQL Community Server (GPL)</li>
+  <li>Tested against H2/1.4.179</li>
+  <li>
+  <p>0.0.5</p></li>
+  <li>Added the snapshot store</li>
+  <li>
+  <p>0.0.4</p></li>
+  <li>Refactored the JdbcSyncWriteJournal so it supports the following databases:</li>
+  <li>
+  <p>0.0.3 (2014-07-01)</p></li>
+  <li>Using <a href="https://github.com/krasserm">Martin Krasser&rsquo;s</a> <a href="https://github.com/krasserm/akka-persistence-testkit">akka-persistence-testkit</a>  to test the akka-persistence-jdbc plugin.</li>
+  <li>Update to Akka 2.3.4</li>
+  <li>
+  <p>0.0.2 (2014-06-30)</p></li>
+  <li>Using <a href="http://scalikejdbc.org/">ScalikeJDBC</a> as the JDBC access library instead of my home-brew one.</li>
+  <li>
+  <p>0.0.1 (2014-05-23)</p></li>
+  <li>Initial commit</li>
+</ul>
+<h2><a href="#code-of-conduct" name="code-of-conduct" class="anchor"><span class="anchor-link"></span></a>Code of Conduct</h2>
+<p>Contributors all agree to follow the <a href="http://www.w3.org/Consortium/cepc/">W3C Code of Ethics and Professional Conduct</a>.</p>
+<p>If you want to take action, feel free to contact Dennis Vriend <a href="mailto:&#x64;&#110;&#118;r&#x69;e&#110;&#100;@&#x67;&#x6d;&#x61;&#105;&#108;.&#99;&#111;&#x6d;">&#x64;&#110;&#118;r&#x69;e&#110;&#100;@&#x67;&#x6d;&#x61;&#105;&#108;.&#99;&#111;&#x6d;</a>. You can also contact W3C Staff as explained in <a href="http://www.w3.org/Consortium/pwe/#Procedures">W3C Procedures</a>.</p>
+<h2><a href="#license" name="license" class="anchor"><span class="anchor-link"></span></a>License</h2>
+<p>This source code is made available under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 License</a>. The [quick summary of what this license means is available here](<a href="https://tldrlegal.com/license/apache-license-2.0-(apache-2.0)">https://tldrlegal.com/license/apache-license-2.0-(apache-2.0)</a>)</p>
+<p>Have fun!</p>
+<div class="nav-next">
+<p><strong>Next:</strong> <a href="inmemory.html">akka-persistence-inmemory</a></p>
+</div>
+</div>
+<div class="large-3 show-for-large column" data-sticky-container>
+<nav class="sidebar sticky" data-sticky data-anchor="docs" data-sticky-on="large">
+<div class="page-nav">
+<div class="nav-title">On this page:</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="jdbc.html#akka-persistence-jdbc">akka-persistence-jdbc</a>
+  <ul>
+    <li><a href="jdbc.html#artifacts">Artifacts</a></li>
+    <li><a href="jdbc.html#contribution-policy">Contribution policy</a></li>
+    <li><a href="jdbc.html#license">License</a></li>
+    <li><a href="jdbc.html#configuration">Configuration</a></li>
+    <li><a href="jdbc.html#datasource-lookup-by-jndi-name">DataSource lookup by JNDI name</a></li>
+    <li><a href="jdbc.html#postgres-configuration">Postgres configuration</a></li>
+    <li><a href="jdbc.html#postgres-schema">Postgres schema</a></li>
+    <li><a href="jdbc.html#mysql-configuration">MySQL configuration</a></li>
+    <li><a href="jdbc.html#mysql-schema">MySQL schema</a></li>
+    <li><a href="jdbc.html#h2-configuration">H2 configuration</a></li>
+    <li><a href="jdbc.html#h2-schema">H2 schema</a></li>
+    <li><a href="jdbc.html#oracle-configuration">Oracle configuration</a></li>
+    <li><a href="jdbc.html#oracle-schema">Oracle schema</a></li>
+    <li><a href="jdbc.html#how-to-get-the-readjournal-using-scala">How to get the ReadJournal using Scala</a></li>
+    <li><a href="jdbc.html#how-to-get-the-readjournal-using-java">How to get the ReadJournal using Java</a></li>
+    <li><a href="jdbc.html#persistence-query">Persistence Query</a></li>
+    <li><a href="jdbc.html#allpersistenceidsquery-and-currentpersistenceidsquery">AllPersistenceIdsQuery and CurrentPersistenceIdsQuery</a></li>
+    <li><a href="jdbc.html#eventsbypersistenceidquery-and-currenteventsbypersistenceidquery">EventsByPersistenceIdQuery and CurrentEventsByPersistenceIdQuery</a></li>
+    <li><a href="jdbc.html#eventsbytag-and-currenteventsbytag">EventsByTag and CurrentEventsByTag</a></li>
+    <li><a href="jdbc.html#tagging-events">Tagging events</a></li>
+    <li><a href="jdbc.html#custom-dao-implementation">Custom DAO Implementation</a></li>
+    <li><a href="jdbc.html#explicitly-shutting-down-the-database-connections">Explicitly shutting down the database connections</a></li>
+    <li><a href="jdbc.html#some-videos-about-akka-persistence-streams-and-event-sourcing">Some videos about Akka Persistence, streams and Event Sourcing</a></li>
+  </ul></li>
+</ul>
+</div>
+</div>
+</nav>
+</div>
+</div>
+
+</section>
+</div>
+
+</div>
+
+<footer class="site-footer">
+
+<section class="site-footer-nav">
+<div class="expanded row">
+<div class="small-12 large-offset-2 large-10 column">
+<div class="row site-footer-content">
+
+<div class="small-12 medium-4 large-3 text-center column">
+<div class="nav-links">
+<ul>
+<!-- <li><a href="https://www.example.com/products/">Products</a> -->
+</ul>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</section>
+
+<section class="site-footer-base">
+<div class="expanded row">
+<div class="small-12 large-offset-2 large-10 column">
+<div class="row site-footer-content">
+
+<div class="small-12 text-center large-9 column">
+
+<!--
+<div class="copyright">
+<span class="text">&copy; 2016</span>
+<a href="https://www.example.com" class="logo">logo</a>
+</div>
+-->
+</div>
+
+</div>
+</div>
+</div>
+</section>
+</footer>
+
+</div>
+</div>
+</div>
+</body>
+
+<script type="text/javascript" src="lib/foundation/dist/foundation.min.js"></script>
+<script type="text/javascript">jQuery(document).foundation();</script>
+<script type="text/javascript" src="js/magellan.js"></script>
+
+<style type="text/css">@import "lib/prettify/prettify.css";</style>
+<script type="text/javascript" src="lib/prettify/prettify.js"></script>
+<script type="text/javascript" src="lib/prettify/lang-scala.js"></script>
+<script type="text/javascript">jQuery(function(){window.prettyPrint && prettyPrint()});</script>
+
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+
+<head>
+<title>Journal Writer · akka-persistence</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content='Plugins and tooling for akka-persistence'/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:100normal,100italic,300normal,300italic,400normal,400italic,500normal,500italic,700normal,700italic,900normal,900italicc" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="lib/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="js/page.js"></script>
+<link rel="stylesheet" type="text/css" href="lib/normalize.css/normalize.css"/>
+<link rel="stylesheet" type="text/css" href="lib/foundation/dist/foundation.min.css"/>
+<link rel="stylesheet" type="text/css" href="css/page.css"/>
+
+<!--
+<link rel="shortcut icon" href="images/favicon.ico" />
+-->
+</head>
+
+<body>
+<div class="off-canvas-wrapper">
+<div class="off-canvas-wrapper-inner" data-off-canvas-wrapper>
+
+<div class="off-canvas position-left" id="off-canvas-menu" data-off-canvas>
+<nav class="off-canvas-nav">
+<div class="nav-home">
+<a href="index.html" >
+<span class="home-icon">⌂</span>akka-persistence
+</a>
+<div class="version-number">
+</div>
+</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="jdbc.html">akka-persistence-jdbc</a></li>
+  <li><a href="inmemory.html">akka-persistence-inmemory</a></li>
+  <li><a href="journal-writer.html" class="active">Journal Writer</a></li>
+</ul>
+</div>
+
+</nav>
+</div>
+
+<div class="off-canvas-content" data-off-canvas-content>
+
+<header class="site-header expanded row">
+<div class="small-12 column">
+<a href="#" class="off-canvas-toggle hide-for-medium" data-toggle="off-canvas-menu"><svg class="svg-icon svg-icon-menu" version="1.1" id="Menu" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" enable-background="new 0 0 20 20" xml:space="preserve"> <path class="svg-icon-menu-path" fill="#53CDEC" d="M16.4,9H3.6C3.048,9,3,9.447,3,10c0,0.553,0.048,1,0.6,1H16.4c0.552,0,0.6-0.447,0.6-1C17,9.447,16.952,9,16.4,9z M16.4,13
+H3.6C3.048,13,3,13.447,3,14c0,0.553,0.048,1,0.6,1H16.4c0.552,0,0.6-0.447,0.6-1C17,13.447,16.952,13,16.4,13z M3.6,7H16.4
+C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.048,7,3.6,7z"/></svg>
+</a>
+<div class="title"><a href="index.html">akka-persistence</a></div>
+
+<!--
+<a href="https://www.example.com" class="logo show-for-medium">logo</a>
+-->
+</div>
+</header>
+
+<div class="expanded row">
+
+<div class="medium-3 large-2 show-for-medium column">
+<nav class="site-nav">
+<div class="nav-home">
+<a href="index.html" >
+<span class="home-icon">⌂</span>akka-persistence
+</a>
+<div class="version-number">
+</div>
+</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="jdbc.html">akka-persistence-jdbc</a></li>
+  <li><a href="inmemory.html">akka-persistence-inmemory</a></li>
+  <li><a href="journal-writer.html" class="active">Journal Writer</a></li>
+</ul>
+</div>
+
+</nav>
+</div>
+
+<div class="small-12 medium-9 large-10 column">
+<section class="site-content">
+
+<div class="page-header row">
+<div class="medium-12 show-for-medium column">
+<div class="nav-breadcrumbs">
+<ul>
+  <li><a href="index.html">akka-persistence</a></li>
+  <li>Journal Writer</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div class="page-content row">
+<div class="small-12 large-9 column" id="docs">
+<h1><a href="#journal-writer" name="journal-writer" class="anchor"><span class="anchor-link"></span></a>Journal Writer</h1>
+<p>The Akka Persistence Journal Writer connector consists of an akka-streams Flow and Sink that makes it possible to write EventEnvelope , Seq[EventEnvelope], EventEnvelope2 or Seq[EventEnvelope2] to any akka-persistence jounal. It does this by sending messages directly to the journal plugin itself.</p>
+<h2><a href="#artifacts" name="artifacts" class="anchor"><span class="anchor-link"></span></a>Artifacts</h2>
+<dl>
+  <dt>sbt</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-scala">libraryDependencies += &quot;com.github.dnvriend&quot; %% &quot;akka-persistence-journal-writer&quot; % &quot;0.0.2&quot;
+</code></pre></dd>
+  <dt>Maven</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-xml">&lt;dependency&gt;
+  &lt;groupId&gt;com.github.dnvriend&lt;/groupId&gt;
+  &lt;artifactId&gt;akka-persistence-journal-writer_2.11&lt;/artifactId&gt;
+  &lt;version&gt;0.0.2&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre></dd>
+  <dt>Gradle</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-gradle">dependencies {
+  compile group: &quot;com.github.dnvriend&quot;, name: &quot;akka-persistence-journal-writer_2.11&quot;, version: &quot;0.0.2&quot;
+}
+</code></pre></dd>
+</dl>
+<h2><a href="#basic-usage" name="basic-usage" class="anchor"><span class="anchor-link"></span></a>Basic Usage</h2>
+<p>The akka-persistence-journal-writer lets you write events to any journal. It accepts only two types of messages:</p>
+<p>akka.persistence.query.EventEnvelope akka.persistence.query.EventEnvelope2 Of course, you can send immutable.Seq[EventEnvelope] or immutable.Seq[EventEnvelope2] of those too for bulk loading.</p>
+<p>The basic use case would be loading one event store into another. In this example we will be loading events from the inmemory-journal, using akka-persistence-query and loading the events into the level-db journal:</p>
+<pre class="prettyprint"><code class="language-scala">import akka.stream.scaladsl._
+import akka.persistence.query._
+import akka.persistence.query.scaladsl._
+
+val inMemoryReadJournal = PersistenceQuery(system).readJournalFor(&quot;inmemory-read-journal&quot;)
+ .asInstanceOf[ReadJournal with CurrentPersistenceIdsQuery with CurrentEventsByPersistenceIdQuery]
+
+val result: Future[Done] =
+ inMemoryReadJournal.currentPersistenceIds().flatMapConcat { pid =&gt;
+  inMemoryReadJournal.currentEventsByPersistenceId(pid, 0, Long.MaxValue)
+ }.grouped(100).runWith(JournalWriter.sink(&quot;akka.persistence.journal.leveldb&quot;))
+</code></pre>
+<p>The fragment above reads all events from all persistenceIds from the inmemory-journal using akka-persistence-query and writes them directly into an empty level-db journal. Of course, any journal will work.</p>
+<h2><a href="#converting-serialization-strategy" name="converting-serialization-strategy" class="anchor"><span class="anchor-link"></span></a>Converting serialization strategy</h2>
+<p>Some akka-persistence-query compatible plugins support using the event-adapters from the write-plugin, therefor converting the journal&rsquo;s data-model to the application-model when querying the journal. Say for example that you have a journal that uses the Java-serialization strategy to store events and you would like to convert all those event using another serialization strategy, say Protobuf, then you can just configure some event adapters on the other write-plugin, say the level-db plugin and just load events from the in-memory plugin and store them into the level-db plugin. Akka-persistence will do all the work for you because you have configured the event-adapters on the plugin to do the serialization.</p>
+<p>The solution is the configuration of the event-adapters on the write-plugins like eg:</p>
+<pre class="prettyprint"><code class="language-scala">inmemory-journal {
+event-adapters {
+    adapter-a = &quot;akka.stream.alpakka.persistence.writer.EventAdapterA&quot;
+}
+event-adapter-bindings {
+    &quot;akka.stream.alpakka.persistence.writer.MyMessage&quot; = adapter-a
+}
+}
+
+inmemory-read-journal {
+write-plugin = &quot;inmemory-journal&quot;
+}
+
+akka.persistence.journal.leveldb {
+dir = &quot;target/journal&quot;
+event-adapters {
+    adapter-b = &quot;akka.stream.alpakka.persistence.writer.EventAdapterB&quot;
+}
+event-adapter-bindings {
+    &quot;akka.stream.alpakka.persistence.writer.MyMessage&quot; = adapter-b
+}
+}
+
+akka.persistence.query.journal.leveldb {
+write-plugin = &quot;akka.persistence.journal.leveldb&quot;
+}
+</code></pre>
+<p>In the example above, all events will be written to the in-memory journal using the event-adapter AdapterA. The inmemory-read-journal has been configured to use the event-adapters as configured from the inmemory-journal so when reading events using akka-persistence-query it should return application-domain events and not the java-serialized byte arrays.</p>
+<p>When asking the akka-persistence-journal-writer (JournalWriter) to write events to a write plugin with a certain journalPluginId, eg. the level-db plugin, that plugin has been configured with certain event-adapters. Imagine that those event adapters will convert application-domain events to Protobuf types, then the protobuf serializer will serialize events to byte arrays and store those events in the level-db journal.</p>
+<p>Of course, all events in the inmemory-journal will stay untouched. All events in the level-db journal will be protobuf-encoded.</p>
+<h2><a href="#bulk-loading-events" name="bulk-loading-events" class="anchor"><span class="anchor-link"></span></a>Bulk loading events</h2>
+<p>Say for a moment, that you have some business level entity with a stable identifier, and you have a lot of those. But those entities do not yet exist. They will exist only when they are created in the journal; ie. they have an initial state and a persistenceId of course.</p>
+<p>Also imagine that the initial state is in some very large CSV file or JSON file that has been provided to you by an Apache Spark job for example.</p>
+<p>You <em>could</em> do the following:</p>
+<ul>
+  <li>read each record,</li>
+  <li>convert to an event,</li>
+  <li>send events to shard,</li>
+  <li>persistent actor will be recovered,</li>
+  <li>event will be stored,</li>
+  <li>persistent actor will be passified,</li>
+  <li>actor will be unloaded from memory.</li>
+  <li>This is in the book&hellip;</li>
+</ul>
+<p>You could also do the following:</p>
+<ul>
+  <li>read each record with a FileIO source</li>
+  <li>convert the CSV to a the known event, wrap into a Seq[EventEnvelope]</li>
+  <li>directly store these events in the journal</li>
+  <li>This will have no persistent-actor life cycle overhead and will be much faster.</li>
+</ul>
+<p>Its only applicable in some use cases of course.</p>
+<h3><a href="#running-the-example-code" name="running-the-example-code" class="anchor"><span class="anchor-link"></span></a>Running the example code</h3>
+<p>The code in this guide is part of runnable tests of this project. You are welcome to edit the code and run it in sbt.</p>
+<dl>
+  <dt>Scala</dt>
+  <dd>
+  <pre class="prettyprint"><code>sbt
+&gt; journalWriter/test
+</code></pre></dd>
+  <dt>Java</dt>
+  <dd>
+  <pre class="prettyprint"><code>sbt
+&gt; journalWriter/test
+</code></pre></dd>
+</dl>
+</div>
+<div class="large-3 show-for-large column" data-sticky-container>
+<nav class="sidebar sticky" data-sticky data-anchor="docs" data-sticky-on="large">
+<div class="page-nav">
+<div class="nav-title">On this page:</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="journal-writer.html#journal-writer">Journal Writer</a>
+  <ul>
+    <li><a href="journal-writer.html#artifacts">Artifacts</a></li>
+    <li><a href="journal-writer.html#basic-usage">Basic Usage</a></li>
+    <li><a href="journal-writer.html#converting-serialization-strategy">Converting serialization strategy</a></li>
+    <li><a href="journal-writer.html#bulk-loading-events">Bulk loading events</a></li>
+  </ul></li>
+</ul>
+</div>
+</div>
+</nav>
+</div>
+</div>
+
+</section>
+</div>
+
+</div>
+
+<footer class="site-footer">
+
+<section class="site-footer-nav">
+<div class="expanded row">
+<div class="small-12 large-offset-2 large-10 column">
+<div class="row site-footer-content">
+
+<div class="small-12 medium-4 large-3 text-center column">
+<div class="nav-links">
+<ul>
+<!-- <li><a href="https://www.example.com/products/">Products</a> -->
+</ul>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</section>
+
+<section class="site-footer-base">
+<div class="expanded row">
+<div class="small-12 large-offset-2 large-10 column">
+<div class="row site-footer-content">
+
+<div class="small-12 text-center large-9 column">
+
+<!--
+<div class="copyright">
+<span class="text">&copy; 2016</span>
+<a href="https://www.example.com" class="logo">logo</a>
+</div>
+-->
+</div>
+
+</div>
+</div>
+</div>
+</section>
+</footer>
+
+</div>
+</div>
+</div>
+</body>
+
+<script type="text/javascript" src="lib/foundation/dist/foundation.min.js"></script>
+<script type="text/javascript">jQuery(document).foundation();</script>
+<script type="text/javascript" src="js/magellan.js"></script>
+
+<style type="text/css">@import "lib/prettify/prettify.css";</style>
+<script type="text/javascript" src="lib/prettify/prettify.js"></script>
+<script type="text/javascript" src="lib/prettify/lang-scala.js"></script>
+<script type="text/javascript">jQuery(function(){window.prettyPrint && prettyPrint()});</script>
+
+</html>
