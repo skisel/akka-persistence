@@ -49,6 +49,15 @@ lazy val resumableQuery = project
     Dependencies.ResumableQuery
   ).dependsOn(streamsExtension, inmemory % "test -> compile", journalWriter % "test -> compile")
 
+lazy val httpClient = project
+  .in(file("http-client"))
+  .enablePlugins(AutomateHeaderPlugin, ReleasePlugin)
+  .settings(
+    name := "akka-http-client",    
+    crossScalaVersions := Dependencies.ScalaVersions.take(1),
+    Dependencies.HttpClient
+  )
+
 lazy val docs = project
   .in(file("paradox"))
   .enablePlugins(ParadoxPlugin)

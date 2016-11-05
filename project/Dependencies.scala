@@ -5,6 +5,7 @@ object Dependencies {
     val ScalaVersions = Seq("2.11.8", "2.12.0")
     val ScalaXmlVersion = "1.0.5"
     val AkkaVersion = "2.4.12"
+    val HttpVersion = "3.0.0-RC1"
     val ScalazVersion = "7.2.7"
     val CassandraVersion = "3.1.2"
     val SlickVersion = "3.1.1"
@@ -48,7 +49,7 @@ object Dependencies {
     val JournalWriter = Seq(
       libraryDependencies ++= Seq(
         "commons-io" % "commons-io" % CommonsIoVersion % Test,
-        "org.iq80.leveldb" % "leveldb" % "0.7" % Test,
+        "org.iq80.leveldb" % "leveldb" % "0.9" % Test,
         "org.fusesource.leveldbjni" % "leveldbjni-all" % "1.8" % Test
       )
     )
@@ -63,6 +64,16 @@ object Dependencies {
     val ResumableQuery = Seq(
       libraryDependencies ++= Seq(
         "org.scalaz" %% "scalaz-core" % ScalazVersion        
+      )
+    )
+
+    val HttpClient = Seq(
+      libraryDependencies ++= Seq(
+        "com.typesafe.akka" %% "akka-http-core" % HttpVersion,
+        "com.typesafe.akka" %% "akka-http-spray-json" % HttpVersion,
+        "com.typesafe.akka" %% "akka-http-xml" % HttpVersion,
+        "com.hunorkovacs" %% "koauth" % "1.1.0" exclude("com.typesafe.akka", "akka-actor_2.11") exclude("org.specs2", "specs2_2.11"),
+        "com.typesafe.akka" %% "akka-http-testkit" % HttpVersion % Test    
       )
     )
 }
