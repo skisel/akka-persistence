@@ -1,6 +1,6 @@
 # Journal Writer
 
-The Akka Persistence Journal Writer connector consists of an akka-streams Flow and Sink that makes it possible to write EventEnvelope , Seq[EventEnvelope], EventEnvelope2 or Seq[EventEnvelope2] to any akka-persistence jounal. It does this by sending messages directly to the journal plugin itself.
+@github[akka-persistence-journal-writer](/journal-writer) consists of an akka-streams Flow and Sink that makes it possible to write EventEnvelope , Seq[EventEnvelope], EventEnvelope2 or Seq[EventEnvelope2] to any akka-persistence jounal.
 
 ## Artifacts
 
@@ -92,7 +92,6 @@ write-plugin = "akka.persistence.journal.leveldb"
 }
 ```
 
-
 In the example above, all events will be written to the in-memory journal using the event-adapter AdapterA. The inmemory-read-journal has been configured to use the event-adapters as configured from the inmemory-journal so when reading events using akka-persistence-query it should return application-domain events and not the java-serialized byte arrays.
 
 When asking the akka-persistence-journal-writer (JournalWriter) to write events to a write plugin with a certain journalPluginId, eg. the level-db plugin, that plugin has been configured with certain event-adapters. Imagine that those event adapters will convert application-domain events to Protobuf types, then the protobuf serializer will serialize events to byte arrays and store those events in the level-db journal.
@@ -140,3 +139,11 @@ Java
     sbt
     > journalWriter/test
     ```
+
+## Changelog
+
+### 0.0.2 (2016-11-03)
+  - cross scala 2.11.8 and 2.12.0 build against akka 2.4.12
+
+### 0.0.1 (2016-11-03)
+  - First release

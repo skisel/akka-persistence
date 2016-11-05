@@ -97,7 +97,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <div class="page-content row">
 <div class="small-12 large-9 column" id="docs">
 <h1><a href="#journal-writer" name="journal-writer" class="anchor"><span class="anchor-link"></span></a>Journal Writer</h1>
-<p>The Akka Persistence Journal Writer connector consists of an akka-streams Flow and Sink that makes it possible to write EventEnvelope , Seq[EventEnvelope], EventEnvelope2 or Seq[EventEnvelope2] to any akka-persistence jounal. It does this by sending messages directly to the journal plugin itself.</p>
+<p><a href="https://github.com/dnvriend/akka-persistence/tree/master/journal-writer">akka-persistence-journal-writer</a> consists of an akka-streams Flow and Sink that makes it possible to write EventEnvelope , Seq[EventEnvelope], EventEnvelope2 or Seq[EventEnvelope2] to any akka-persistence jounal.</p>
 <h2><a href="#artifacts" name="artifacts" class="anchor"><span class="anchor-link"></span></a>Artifacts</h2>
 <dl>
   <dt>sbt</dt>
@@ -205,6 +205,15 @@ write-plugin = &quot;akka.persistence.journal.leveldb&quot;
 &gt; journalWriter/test
 </code></pre></dd>
 </dl>
+<h2><a href="#changelog" name="changelog" class="anchor"><span class="anchor-link"></span></a>Changelog</h2>
+<h3><a href="#0-0-2-2016-11-03-" name="0-0-2-2016-11-03-" class="anchor"><span class="anchor-link"></span></a>0.0.2 (2016-11-03)</h3>
+<ul>
+  <li>cross scala 2.11.8 and 2.12.0 build against akka 2.4.12</li>
+</ul>
+<h3><a href="#0-0-1-2016-11-03-" name="0-0-1-2016-11-03-" class="anchor"><span class="anchor-link"></span></a>0.0.1 (2016-11-03)</h3>
+<ul>
+  <li>First release</li>
+</ul>
 </div>
 <div class="large-3 show-for-large column" data-sticky-container>
 <nav class="sidebar sticky" data-sticky data-anchor="docs" data-sticky-on="large">
@@ -218,6 +227,7 @@ write-plugin = &quot;akka.persistence.journal.leveldb&quot;
     <li><a href="journal-writer.html#basic-usage">Basic Usage</a></li>
     <li><a href="journal-writer.html#converting-serialization-strategy">Converting serialization strategy</a></li>
     <li><a href="journal-writer.html#bulk-loading-events">Bulk loading events</a></li>
+    <li><a href="journal-writer.html#changelog">Changelog</a></li>
   </ul></li>
 </ul>
 </div>
