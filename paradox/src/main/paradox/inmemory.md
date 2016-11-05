@@ -57,7 +57,7 @@ akka {
 }
 ```
 
-# Configuring the query API
+## Configuring the query API
 The query API can be configured by overriding the defaults by placing the following in application.conf:
  
 ```

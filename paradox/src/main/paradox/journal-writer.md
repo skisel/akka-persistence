@@ -124,7 +124,7 @@ You could also do the following:
 
 Its only applicable in some use cases of course.
 
-### Running the example code
+## Running the example code
 
 The code in this guide is part of runnable tests of this project. You are welcome to edit the code and run it in sbt.
 

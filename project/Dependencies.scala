@@ -3,11 +3,13 @@ import sbt.Keys._
 
 object Dependencies {
     val ScalaVersions = Seq("2.11.8", "2.12.0")
+    val ScalaXmlVersion = "1.0.5"
     val AkkaVersion = "2.4.12"
     val ScalazVersion = "7.2.7"
     val CassandraVersion = "3.1.2"
     val SlickVersion = "3.1.1"
     val HikariCPVersion = "2.5.1"
+    val CommonsIoVersion = "2.5"
 
     val Common = Seq(
       libraryDependencies ++= Seq(
@@ -45,9 +47,22 @@ object Dependencies {
 
     val JournalWriter = Seq(
       libraryDependencies ++= Seq(
-        "commons-io" % "commons-io" % "2.5" % Test,
+        "commons-io" % "commons-io" % CommonsIoVersion % Test,
         "org.iq80.leveldb" % "leveldb" % "0.7" % Test,
         "org.fusesource.leveldbjni" % "leveldbjni-all" % "1.8" % Test
+      )
+    )
+
+    val StreamsExtensions = Seq(
+      libraryDependencies ++= Seq(
+        "commons-io" % "commons-io" % CommonsIoVersion,
+        "org.scala-lang.modules" %% "scala-xml" % ScalaXmlVersion
+      )
+    )
+
+    val ResumableQuery = Seq(
+      libraryDependencies ++= Seq(
+        "org.scalaz" %% "scalaz-core" % ScalazVersion        
       )
     )
 }

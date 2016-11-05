@@ -31,7 +31,23 @@ lazy val journalWriter = project
   .settings(
     name := "akka-persistence-journal-writer",
     Dependencies.JournalWriter
-  ).dependsOn(inmemory)
+  ).dependsOn(inmemory % "test -> compile")
+
+lazy val streamsExtension = project
+  .in(file("stream-extensions"))
+  .enablePlugins(AutomateHeaderPlugin, ReleasePlugin)
+  .settings(
+    name := "akka-streams-extensions",
+    Dependencies.StreamsExtensions
+  ).dependsOn(inmemory % "test -> compile")
+
+lazy val resumableQuery = project
+  .in(file("resumable-query"))
+  .enablePlugins(AutomateHeaderPlugin, ReleasePlugin)
+  .settings(
+    name := "akka-persistence-resumable-query",
+    Dependencies.ResumableQuery
+  ).dependsOn(streamsExtension, inmemory % "test -> compile", journalWriter % "test -> compile")
 
 lazy val docs = project
   .in(file("paradox"))
