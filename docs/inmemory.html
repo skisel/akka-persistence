@@ -335,141 +335,141 @@ class TaggingEventAdapter extends WriteEventAdapter {
   <li><a href="https://www.youtube.com/watch?v=r5lecCBazvE">Patrik Nordwall - Intro to Akka persistence (2014)</a></li>
   <li><a href="https://www.youtube.com/watch?v=8JKjvY4etTY">Greg Young - Event Sourcing(2014)</a></li>
 </ul>
-<h1><a href="#whats-new-" name="whats-new-" class="anchor"><span class="anchor-link"></span></a>What&rsquo;s new?</h1>
-<h2><a href="#1-3-14-2016-11-03-" name="1-3-14-2016-11-03-" class="anchor"><span class="anchor-link"></span></a>1.3.14 (2016-11-03)</h2>
+<h2><a href="#changelog" name="changelog" class="anchor"><span class="anchor-link"></span></a>Changelog</h2>
+<h3><a href="#1-3-14-2016-11-03-" name="1-3-14-2016-11-03-" class="anchor"><span class="anchor-link"></span></a>1.3.14 (2016-11-03)</h3>
 <ul>
   <li>cross scala 2.11.8 and 2.12.0 build</li>
 </ul>
-<h2><a href="#1-3-13-2016-11-01-birthday-edition-" name="1-3-13-2016-11-01-birthday-edition-" class="anchor"><span class="anchor-link"></span></a>1.3.13 (2016-11-01 - Birthday Edition!)</h2>
+<h3><a href="#1-3-13-2016-11-01-birthday-edition-" name="1-3-13-2016-11-01-birthday-edition-" class="anchor"><span class="anchor-link"></span></a>1.3.13 (2016-11-01 - Birthday Edition!)</h3>
 <ul>
   <li>Implemented support for the <code>akka.persistence.query.TimeBasedUUID</code>.</li>
   <li>You should set the <strong>new</strong> configuration key <code>inmemory-read-journal.offset-mode = &quot;uuid&quot;</code>, defaults to <code>sequence</code> to produce <code>EventEnvelope2</code> that contain <code>TimeBasedUUID</code> offset fields.</li>
 </ul>
-<h2><a href="#1-3-12-2016-10-28-" name="1-3-12-2016-10-28-" class="anchor"><span class="anchor-link"></span></a>1.3.12 (2016-10-28)</h2>
+<h3><a href="#1-3-12-2016-10-28-" name="1-3-12-2016-10-28-" class="anchor"><span class="anchor-link"></span></a>1.3.12 (2016-10-28)</h3>
 <ul>
   <li>Akka 2.4.11 -&gt; 2.4.12</li>
   <li>Support for the new queries <code>CurrentEventsByTagQuery2</code> and <code>EventsByTagQuery2</code>, please read the <a href="http://doc.akka.io/docs/akka/2.4.12/scala/persistence-query.html">akka-persistence-query</a> documentation to see what has changed.</li>
   <li>The akka-persistence-inmemory plugin only supports the <code>akka.persistence.query.NoOffset</code> or <code>akka.persistence.query.Sequence</code> offset types.</li>
   <li>There is no support for the <code>akka.persistence.query.TimeBasedUUID</code> offset type. When used, akka-persistence-inmemory will throw an IllegalArgumentException.</li>
 </ul>
-<h2><a href="#1-3-11-2016-10-23-" name="1-3-11-2016-10-23-" class="anchor"><span class="anchor-link"></span></a>1.3.11 (2016-10-23)</h2>
+<h3><a href="#1-3-11-2016-10-23-" name="1-3-11-2016-10-23-" class="anchor"><span class="anchor-link"></span></a>1.3.11 (2016-10-23)</h3>
 <ul>
   <li>Scala 2.11.8 and 2.12.0-RC2 compatible</li>
 </ul>
-<h2><a href="#1-3-10-2016-09-30-" name="1-3-10-2016-09-30-" class="anchor"><span class="anchor-link"></span></a>1.3.10 (2016-09-30)</h2>
+<h3><a href="#1-3-10-2016-09-30-" name="1-3-10-2016-09-30-" class="anchor"><span class="anchor-link"></span></a>1.3.10 (2016-09-30)</h3>
 <ul>
   <li>Akka 2.4.10 -&gt; 2.4.11</li>
 </ul>
-<h2><a href="#1-3-9-2016-09-22-" name="1-3-9-2016-09-22-" class="anchor"><span class="anchor-link"></span></a>1.3.9 (2016-09-22)</h2>
+<h3><a href="#1-3-9-2016-09-22-" name="1-3-9-2016-09-22-" class="anchor"><span class="anchor-link"></span></a>1.3.9 (2016-09-22)</h3>
 <ul>
   <li>Adapted version of PR #28 by <a href="https://github.com/ygree">Yury Gribkov</a> - Fix bug: It doesn&rsquo;t adapt events read from journal, thanks!</li>
   <li>As event adapters are no first class citizins of akka-persistence-query (yet), a workaround based on the configuration of akka-persistence-cassandra has been implemented in the inmemory journal based on the work of <a href="https://github.com/ygree">Yury Gribkov</a>. Basically, the query-journal will look for a <strong>write-plugin</strong> entry in the <strong>inmemory-read-journal</strong> configuration of your application.conf that must point to the <em>writePluginId</em> that will write the events to the journal. That writePlugin has all event adapters configured and if applicable, those event adapters will be used to adapt the events from the data-model to the application-model effectively you should have application-model events in your <em>EventEnvelope</em> if configured correctly.</li>
   <li>Removed the non-official and never-to-be-used bulk loading interface</li>
 </ul>
-<h2><a href="#1-3-8-2016-09-07-" name="1-3-8-2016-09-07-" class="anchor"><span class="anchor-link"></span></a>1.3.8 (2016-09-07)</h2>
+<h3><a href="#1-3-8-2016-09-07-" name="1-3-8-2016-09-07-" class="anchor"><span class="anchor-link"></span></a>1.3.8 (2016-09-07)</h3>
 <ul>
   <li>Akka 2.4.9 -&gt; Akka 2.4.10</li>
 </ul>
-<h2><a href="#1-3-7-2016-08-21-" name="1-3-7-2016-08-21-" class="anchor"><span class="anchor-link"></span></a>1.3.7 (2016-08-21)</h2>
+<h3><a href="#1-3-7-2016-08-21-" name="1-3-7-2016-08-21-" class="anchor"><span class="anchor-link"></span></a>1.3.7 (2016-08-21)</h3>
 <ul>
   <li>Fix for EventsByPersistenceId should terminate when toSequenceNumber is reached as pointed out by <a href="https://github.com/monktastic">monktastic</a>, thanks!</li>
 </ul>
-<h2><a href="#1-3-6-2016-08-20-" name="1-3-6-2016-08-20-" class="anchor"><span class="anchor-link"></span></a>1.3.6 (2016-08-20)</h2>
+<h3><a href="#1-3-6-2016-08-20-" name="1-3-6-2016-08-20-" class="anchor"><span class="anchor-link"></span></a>1.3.6 (2016-08-20)</h3>
 <ul>
   <li>Akka 2.4.9-RC2 -&gt; Akka 2.4.9</li>
 </ul>
-<h2><a href="#1-3-6-rc2-2016-08-06-" name="1-3-6-rc2-2016-08-06-" class="anchor"><span class="anchor-link"></span></a>1.3.6-RC2 (2016-08-06)</h2>
+<h3><a href="#1-3-6-rc2-2016-08-06-" name="1-3-6-rc2-2016-08-06-" class="anchor"><span class="anchor-link"></span></a>1.3.6-RC2 (2016-08-06)</h3>
 <ul>
   <li>Akka 2.4.9-RC1 -&gt; 2.4.9-RC2</li>
 </ul>
-<h2><a href="#1-3-6-rc1-2016-08-03-" name="1-3-6-rc1-2016-08-03-" class="anchor"><span class="anchor-link"></span></a>1.3.6-RC1 (2016-08-03)</h2>
+<h3><a href="#1-3-6-rc1-2016-08-03-" name="1-3-6-rc1-2016-08-03-" class="anchor"><span class="anchor-link"></span></a>1.3.6-RC1 (2016-08-03)</h3>
 <ul>
   <li>Akka 2.4.8 -&gt; 2.4.9-RC1</li>
 </ul>
-<h2><a href="#1-3-5-2016-07-23-" name="1-3-5-2016-07-23-" class="anchor"><span class="anchor-link"></span></a>1.3.5 (2016-07-23)</h2>
+<h3><a href="#1-3-5-2016-07-23-" name="1-3-5-2016-07-23-" class="anchor"><span class="anchor-link"></span></a>1.3.5 (2016-07-23)</h3>
 <ul>
   <li>Support for the <strong>non-official</strong> bulk loading interface <a href="https://github.com/dnvriend/akka-persistence-query-writer/blob/master/src/main/scala/akka/persistence/query/scaladsl/EventWriter.scala">akka.persistence.query.scaladsl.EventWriter</a> added. I need this interface to load massive amounts of data, that will be processed by many actors, but initially I just want to create and store one or more events belonging to an actor, that will handle the business rules eventually. Using actors or a shard region for that matter, just gives to much actor life cycle overhead ie. too many calls to the data store. The <code>akka.persistence.query.scaladsl.EventWriter</code> interface is non-official and puts all responsibility of ensuring the integrity of the journal on you. This means when some strange things are happening caused by wrong loading of the data, and therefor breaking the integrity and ruleset of akka-persistence, all the responsibility on fixing it is on you, and not on the Akka team.</li>
 </ul>
-<h2><a href="#1-3-4-2016-07-17-" name="1-3-4-2016-07-17-" class="anchor"><span class="anchor-link"></span></a>1.3.4 (2016-07-17)</h2>
+<h3><a href="#1-3-4-2016-07-17-" name="1-3-4-2016-07-17-" class="anchor"><span class="anchor-link"></span></a>1.3.4 (2016-07-17)</h3>
 <ul>
   <li>Codacy code cleanup release.</li>
 </ul>
-<h2><a href="#1-3-3-2016-07-16-" name="1-3-3-2016-07-16-" class="anchor"><span class="anchor-link"></span></a>1.3.3 (2016-07-16)</h2>
+<h3><a href="#1-3-3-2016-07-16-" name="1-3-3-2016-07-16-" class="anchor"><span class="anchor-link"></span></a>1.3.3 (2016-07-16)</h3>
 <ul>
   <li>No need for Query Publishers with the new akka-streams API.</li>
 </ul>
-<h2><a href="#1-3-2-2016-07-09-" name="1-3-2-2016-07-09-" class="anchor"><span class="anchor-link"></span></a>1.3.2 (2016-07-09)</h2>
+<h3><a href="#1-3-2-2016-07-09-" name="1-3-2-2016-07-09-" class="anchor"><span class="anchor-link"></span></a>1.3.2 (2016-07-09)</h3>
 <ul>
   <li>Journal entry &lsquo;deleted&rsquo; fixed, must be set manually.</li>
 </ul>
-<h2><a href="#1-3-1-2016-07-09-" name="1-3-1-2016-07-09-" class="anchor"><span class="anchor-link"></span></a>1.3.1 (2016-07-09)</h2>
+<h3><a href="#1-3-1-2016-07-09-" name="1-3-1-2016-07-09-" class="anchor"><span class="anchor-link"></span></a>1.3.1 (2016-07-09)</h3>
 <ul>
   <li>Akka 2.4.7 -&gt; 2.4.8,</li>
   <li>Behavior of akka-persistence-query *byTag query should be up to spec,
 </li>
   <li>Refactored the inmemory plugin code base, should be more clean now.</li>
 </ul>
-<h2><a href="#1-3-0-2016-06-09-" name="1-3-0-2016-06-09-" class="anchor"><span class="anchor-link"></span></a>1.3.0 (2016-06-09)</h2>
+<h3><a href="#1-3-0-2016-06-09-" name="1-3-0-2016-06-09-" class="anchor"><span class="anchor-link"></span></a>1.3.0 (2016-06-09)</h3>
 <ul>
   <li>Removed the queries <code>eventsByPersistenceIdAndTag</code> and <code>currentEventsByPersistenceIdAndTag</code> as they are not supported by Akka natively and can be configured by filtering the event stream.</li>
   <li>Implemented true async queries using the polling strategy</li>
 </ul>
-<h2><a href="#1-2-15-2016-06-05-" name="1-2-15-2016-06-05-" class="anchor"><span class="anchor-link"></span></a>1.2.15 (2016-06-05)</h2>
+<h3><a href="#1-2-15-2016-06-05-" name="1-2-15-2016-06-05-" class="anchor"><span class="anchor-link"></span></a>1.2.15 (2016-06-05)</h3>
 <ul>
   <li>Akka 2.4.6 -&gt; 2.4.7</li>
 </ul>
-<h2><a href="#1-2-14-2016-05-25-" name="1-2-14-2016-05-25-" class="anchor"><span class="anchor-link"></span></a>1.2.14 (2016-05-25)</h2>
+<h3><a href="#1-2-14-2016-05-25-" name="1-2-14-2016-05-25-" class="anchor"><span class="anchor-link"></span></a>1.2.14 (2016-05-25)</h3>
 <ul>
   <li>Fixed issue Unable to differentiate between persistence failures and serialization issues</li>
   <li>Akka 2.4.4 -&gt; 2.4.6</li>
 </ul>
-<h2><a href="#1-2-13-2016-04-14-" name="1-2-13-2016-04-14-" class="anchor"><span class="anchor-link"></span></a>1.2.13 (2016-04-14)</h2>
+<h3><a href="#1-2-13-2016-04-14-" name="1-2-13-2016-04-14-" class="anchor"><span class="anchor-link"></span></a>1.2.13 (2016-04-14)</h3>
 <ul>
   <li>Akka 2.4.3 -&gt; 2.4.4</li>
 </ul>
-<h2><a href="#1-2-12-2016-04-01-" name="1-2-12-2016-04-01-" class="anchor"><span class="anchor-link"></span></a>1.2.12 (2016-04-01)</h2>
+<h3><a href="#1-2-12-2016-04-01-" name="1-2-12-2016-04-01-" class="anchor"><span class="anchor-link"></span></a>1.2.12 (2016-04-01)</h3>
 <ul>
   <li>Scala 2.11.7 -&gt; 2.11.8</li>
   <li>Akka 2.4.2 -&gt; 2.4.3</li>
 </ul>
-<h2><a href="#1-2-11-2016-03-18-" name="1-2-11-2016-03-18-" class="anchor"><span class="anchor-link"></span></a>1.2.11 (2016-03-18)</h2>
+<h3><a href="#1-2-11-2016-03-18-" name="1-2-11-2016-03-18-" class="anchor"><span class="anchor-link"></span></a>1.2.11 (2016-03-18)</h3>
 <ul>
   <li>Fixed issue on the query api where the offset on eventsByTag and eventsByPersistenceIdAndTag queries were not sequential</li>
 </ul>
-<h2><a href="#1-2-10-2016-03-17-" name="1-2-10-2016-03-17-" class="anchor"><span class="anchor-link"></span></a>1.2.10 (2016-03-17)</h2>
+<h3><a href="#1-2-10-2016-03-17-" name="1-2-10-2016-03-17-" class="anchor"><span class="anchor-link"></span></a>1.2.10 (2016-03-17)</h3>
 <ul>
   <li>Refactored the akka-persistence-query interfaces, integrated it back again in one jar, for jcenter deployment simplicity</li>
 </ul>
-<h2><a href="#1-2-9-2016-03-16-" name="1-2-9-2016-03-16-" class="anchor"><span class="anchor-link"></span></a>1.2.9 (2016-03-16)</h2>
+<h3><a href="#1-2-9-2016-03-16-" name="1-2-9-2016-03-16-" class="anchor"><span class="anchor-link"></span></a>1.2.9 (2016-03-16)</h3>
 <ul>
   <li>Added the appropriate Maven POM resources to be publishing to Bintray&rsquo;s JCenter</li>
 </ul>
-<h2><a href="#1-2-8-2016-03-03-" name="1-2-8-2016-03-03-" class="anchor"><span class="anchor-link"></span></a>1.2.8 (2016-03-03)</h2>
+<h3><a href="#1-2-8-2016-03-03-" name="1-2-8-2016-03-03-" class="anchor"><span class="anchor-link"></span></a>1.2.8 (2016-03-03)</h3>
 <ul>
   <li>Fix for propagating serialization errors to akka-persistence so that any error regarding the persistence of messages will be handled by the callback handler of the Persistent Actor; <code>onPersistFailure</code>.</li>
 </ul>
-<h2><a href="#1-2-7-2016-02-18-" name="1-2-7-2016-02-18-" class="anchor"><span class="anchor-link"></span></a>1.2.7 (2016-02-18)</h2>
+<h3><a href="#1-2-7-2016-02-18-" name="1-2-7-2016-02-18-" class="anchor"><span class="anchor-link"></span></a>1.2.7 (2016-02-18)</h3>
 <ul>
   <li>Better storage implementation for journal and snapshot</li>
 </ul>
-<h2><a href="#1-2-6-2016-02-17-" name="1-2-6-2016-02-17-" class="anchor"><span class="anchor-link"></span></a>1.2.6 (2016-02-17)</h2>
+<h3><a href="#1-2-6-2016-02-17-" name="1-2-6-2016-02-17-" class="anchor"><span class="anchor-link"></span></a>1.2.6 (2016-02-17)</h3>
 <ul>
   <li>Akka 2.4.2-RC3 -&gt; 2.4.2</li>
 </ul>
-<h2><a href="#1-2-5-2016-02-13-" name="1-2-5-2016-02-13-" class="anchor"><span class="anchor-link"></span></a>1.2.5 (2016-02-13)</h2>
+<h3><a href="#1-2-5-2016-02-13-" name="1-2-5-2016-02-13-" class="anchor"><span class="anchor-link"></span></a>1.2.5 (2016-02-13)</h3>
 <ul>
   <li>akka-persistence-jdbc-query 1.0.0 -&gt; 1.0.1</li>
 </ul>
-<h2><a href="#1-2-4-2016-02-13-" name="1-2-4-2016-02-13-" class="anchor"><span class="anchor-link"></span></a>1.2.4 (2016-02-13)</h2>
+<h3><a href="#1-2-4-2016-02-13-" name="1-2-4-2016-02-13-" class="anchor"><span class="anchor-link"></span></a>1.2.4 (2016-02-13)</h3>
 <ul>
   <li>Akka 2.4.2-RC2 -&gt; 2.4.2-RC3</li>
 </ul>
-<h2><a href="#1-2-3-2016-02-08-" name="1-2-3-2016-02-08-" class="anchor"><span class="anchor-link"></span></a>1.2.3 (2016-02-08)</h2>
+<h3><a href="#1-2-3-2016-02-08-" name="1-2-3-2016-02-08-" class="anchor"><span class="anchor-link"></span></a>1.2.3 (2016-02-08)</h3>
 <ul>
   <li>Compatibility with Akka 2.4.2-RC2</li>
   <li>Refactored the akka-persistence-query extension interfaces to its own jar: <code>&quot;com.github.dnvriend&quot; %% &quot;akka-persistence-jdbc-query&quot; % &quot;1.0.0&quot;</code></li>
 </ul>
-<h2><a href="#1-2-2-2016-01-30-" name="1-2-2-2016-01-30-" class="anchor"><span class="anchor-link"></span></a>1.2.2 (2016-01-30)</h2>
+<h3><a href="#1-2-2-2016-01-30-" name="1-2-2-2016-01-30-" class="anchor"><span class="anchor-link"></span></a>1.2.2 (2016-01-30)</h3>
 <ul>
   <li>Code is based on <a href="https://github.com/dnvriend/akka-persistence-jdbc">akka-persistence-jdbc</a></li>
   <li>Supports the following queries:
@@ -481,84 +481,84 @@ class TaggingEventAdapter extends WriteEventAdapter {
     </ul>
   </li>
 </ul>
-<h2><a href="#1-2-1-2016-01-28-" name="1-2-1-2016-01-28-" class="anchor"><span class="anchor-link"></span></a>1.2.1 (2016-01-28)</h2>
+<h3><a href="#1-2-1-2016-01-28-" name="1-2-1-2016-01-28-" class="anchor"><span class="anchor-link"></span></a>1.2.1 (2016-01-28)</h3>
 <ul>
   <li>Supports for the javadsl query API</li>
 </ul>
-<h2><a href="#1-2-0-2016-01-26-" name="1-2-0-2016-01-26-" class="anchor"><span class="anchor-link"></span></a>1.2.0 (2016-01-26)</h2>
+<h3><a href="#1-2-0-2016-01-26-" name="1-2-0-2016-01-26-" class="anchor"><span class="anchor-link"></span></a>1.2.0 (2016-01-26)</h3>
 <ul>
   <li>Compatibility with Akka 2.4.2-RC1</li>
 </ul>
-<h2><a href="#1-1-6-2015-12-02-" name="1-1-6-2015-12-02-" class="anchor"><span class="anchor-link"></span></a>1.1.6 (2015-12-02)</h2>
+<h3><a href="#1-1-6-2015-12-02-" name="1-1-6-2015-12-02-" class="anchor"><span class="anchor-link"></span></a>1.1.6 (2015-12-02)</h3>
 <ul>
   <li>Compatibility with Akka 2.4.1</li>
   <li>Merged PR #17 <a href="https://github.com/eshepelyuk">Evgeny Shepelyuk</a> Upgrade to AKKA 2.4.1, thanks!</li>
 </ul>
-<h2><a href="#1-1-5-2015-10-24-" name="1-1-5-2015-10-24-" class="anchor"><span class="anchor-link"></span></a>1.1.5 (2015-10-24)</h2>
+<h3><a href="#1-1-5-2015-10-24-" name="1-1-5-2015-10-24-" class="anchor"><span class="anchor-link"></span></a>1.1.5 (2015-10-24)</h3>
 <ul>
   <li>Compatibility with Akka 2.4.0</li>
   <li>Merged PR #13 <a href="https://github.com/eshepelyuk">Evgeny Shepelyuk</a> HighestSequenceNo should be kept on message deletion, thanks!</li>
   <li>Should be a fix for <a href="https://github.com/dnvriend/akka-persistence-inmemory/issues/13">Issue #13 - HighestSequenceNo should be kept on message deletion</a> as per <a href="https://github.com/akka/akka/issues/18559">Akka issue #18559</a></li>
 </ul>
-<h2><a href="#1-1-4-2015-10-17-" name="1-1-4-2015-10-17-" class="anchor"><span class="anchor-link"></span></a>1.1.4 (2015-10-17)</h2>
+<h3><a href="#1-1-4-2015-10-17-" name="1-1-4-2015-10-17-" class="anchor"><span class="anchor-link"></span></a>1.1.4 (2015-10-17)</h3>
 <ul>
   <li>Compatibility with Akka 2.4.0</li>
   <li>Merged PR #12 <a href="https://github.com/eshepelyuk">Evgeny Shepelyuk</a> Live version of eventsByPersistenceId, thanks!</li>
 </ul>
-<h2><a href="#1-1-3-2015-10-02-" name="1-1-3-2015-10-02-" class="anchor"><span class="anchor-link"></span></a>1.1.3 (2015-10-02)</h2>
+<h3><a href="#1-1-3-2015-10-02-" name="1-1-3-2015-10-02-" class="anchor"><span class="anchor-link"></span></a>1.1.3 (2015-10-02)</h3>
 <ul>
   <li>Compatibility with Akka 2.4.0</li>
   <li>Akka 2.4.0-RC3 -&gt; 2.4.0</li>
 </ul>
-<h2><a href="#1-1-3-rc3-2015-09-24-" name="1-1-3-rc3-2015-09-24-" class="anchor"><span class="anchor-link"></span></a>1.1.3-RC3 (2015-09-24)</h2>
+<h3><a href="#1-1-3-rc3-2015-09-24-" name="1-1-3-rc3-2015-09-24-" class="anchor"><span class="anchor-link"></span></a>1.1.3-RC3 (2015-09-24)</h3>
 <ul>
   <li>Merged PR #10 <a href="https://github.com/eshepelyuk">Evgeny Shepelyuk</a> Live version of allPersistenceIds, thanks!</li>
   <li>Compatibility with Akka 2.4.0-RC3</li>
   <li>Use the following library dependency: <code>&quot;com.github.dnvriend&quot; %% &quot;akka-persistence-inmemory&quot; % &quot;1.1.3-RC3&quot;</code></li>
 </ul>
-<h2><a href="#1-1-1-rc3-2015-09-19-" name="1-1-1-rc3-2015-09-19-" class="anchor"><span class="anchor-link"></span></a>1.1.1-RC3 (2015-09-19)</h2>
+<h3><a href="#1-1-1-rc3-2015-09-19-" name="1-1-1-rc3-2015-09-19-" class="anchor"><span class="anchor-link"></span></a>1.1.1-RC3 (2015-09-19)</h3>
 <ul>
   <li>Merged Issue #9 <a href="https://github.com/eshepelyuk">Evgeny Shepelyuk</a> Initial implemenation of Persistence Query for In Memory journal, thanks!</li>
   <li>Compatibility with Akka 2.4.0-RC3</li>
   <li>Use the following library dependency: <code>&quot;com.github.dnvriend&quot; %% &quot;akka-persistence-inmemory&quot; % &quot;1.1.1-RC3&quot;</code></li>
 </ul>
-<h2><a href="#1-1-0-rc3-2015-09-17-" name="1-1-0-rc3-2015-09-17-" class="anchor"><span class="anchor-link"></span></a>1.1.0-RC3 (2015-09-17)</h2>
+<h3><a href="#1-1-0-rc3-2015-09-17-" name="1-1-0-rc3-2015-09-17-" class="anchor"><span class="anchor-link"></span></a>1.1.0-RC3 (2015-09-17)</h3>
 <ul>
   <li>Merged Issue #6 <a href="https://github.com/eshepelyuk">Evgeny Shepelyuk</a> Conditional ability to perform full serialization while adding messages to journal, thanks!</li>
   <li>Compatibility with Akka 2.4.0-RC3</li>
   <li>Use the following library dependency: <code>&quot;com.github.dnvriend&quot; %% &quot;akka-persistence-inmemory&quot; % &quot;1.1.0-RC3&quot;</code></li>
 </ul>
-<h2><a href="#1-1-0-rc2-2015-09-05-" name="1-1-0-rc2-2015-09-05-" class="anchor"><span class="anchor-link"></span></a>1.1.0-RC2 (2015-09-05)</h2>
+<h3><a href="#1-1-0-rc2-2015-09-05-" name="1-1-0-rc2-2015-09-05-" class="anchor"><span class="anchor-link"></span></a>1.1.0-RC2 (2015-09-05)</h3>
 <ul>
   <li>Compatibility with Akka 2.4.0-RC2</li>
   <li>Use the following library dependency: <code>&quot;com.github.dnvriend&quot; %% &quot;akka-persistence-inmemory&quot; % &quot;1.1.0-RC2&quot;</code></li>
 </ul>
-<h2><a href="#1-0-5-2015-09-04-" name="1-0-5-2015-09-04-" class="anchor"><span class="anchor-link"></span></a>1.0.5 (2015-09-04)</h2>
+<h3><a href="#1-0-5-2015-09-04-" name="1-0-5-2015-09-04-" class="anchor"><span class="anchor-link"></span></a>1.0.5 (2015-09-04)</h3>
 <ul>
   <li>Compatibilty with Akka 2.3.13</li>
   <li>Akka 2.3.12 -&gt; 2.3.13</li>
 </ul>
-<h2><a href="#1-1-0-rc1-2015-09-02-" name="1-1-0-rc1-2015-09-02-" class="anchor"><span class="anchor-link"></span></a>1.1.0-RC1 (2015-09-02)</h2>
+<h3><a href="#1-1-0-rc1-2015-09-02-" name="1-1-0-rc1-2015-09-02-" class="anchor"><span class="anchor-link"></span></a>1.1.0-RC1 (2015-09-02)</h3>
 <ul>
   <li>Compatibility with Akka 2.4.0-RC1</li>
   <li>Use the following library dependency: <code>&quot;com.github.dnvriend&quot; %% &quot;akka-persistence-inmemory&quot; % &quot;1.1.0-RC1&quot;</code></li>
 </ul>
-<h2><a href="#1-0-4-2015-08-16-" name="1-0-4-2015-08-16-" class="anchor"><span class="anchor-link"></span></a>1.0.4 (2015-08-16)</h2>
+<h3><a href="#1-0-4-2015-08-16-" name="1-0-4-2015-08-16-" class="anchor"><span class="anchor-link"></span></a>1.0.4 (2015-08-16)</h3>
 <ul>
   <li>Scala 2.11.6 -&gt; 2.11.7</li>
   <li>Akka 2.3.11 -&gt; 2.3.12</li>
   <li>Apache-2.0 license</li>
 </ul>
-<h2><a href="#1-0-3-2015-05-25-" name="1-0-3-2015-05-25-" class="anchor"><span class="anchor-link"></span></a>1.0.3 (2015-05-25)</h2>
+<h3><a href="#1-0-3-2015-05-25-" name="1-0-3-2015-05-25-" class="anchor"><span class="anchor-link"></span></a>1.0.3 (2015-05-25)</h3>
 <ul>
   <li>Merged Issue #2 <a href="https://github.com/sortega">Sebastián Ortega</a> Regression: Fix corner case when persisted events are deleted, thanks!</li>
   <li>Added test for the corner case issue #1 and #2</li>
 </ul>
-<h2><a href="#1-0-2-2015-05-20-" name="1-0-2-2015-05-20-" class="anchor"><span class="anchor-link"></span></a>1.0.2 (2015-05-20)</h2>
+<h3><a href="#1-0-2-2015-05-20-" name="1-0-2-2015-05-20-" class="anchor"><span class="anchor-link"></span></a>1.0.2 (2015-05-20)</h3>
 <ul>
   <li>Refactored from the ConcurrentHashMap implementation to a pure Actor managed concurrency model</li>
 </ul>
-<h2><a href="#1-0-1-2015-05-16-" name="1-0-1-2015-05-16-" class="anchor"><span class="anchor-link"></span></a>1.0.1 (2015-05-16)</h2>
+<h3><a href="#1-0-1-2015-05-16-" name="1-0-1-2015-05-16-" class="anchor"><span class="anchor-link"></span></a>1.0.1 (2015-05-16)</h3>
 <ul>
   <li>Some refactoring, fixed some misconceptions about the behavior of Scala Futures one year ago :)</li>
   <li>Akka 2.3.6 -&gt; 2.3.11</li>
@@ -566,15 +566,15 @@ class TaggingEventAdapter extends WriteEventAdapter {
   <li>Scala 2.10.4 -&gt; 2.10.5</li>
   <li>Merged Issue #1 <a href="https://github.com/sortega">Sebastián Ortega</a> Fix corner case when persisted events are deleted, thanks!</li>
 </ul>
-<h2><a href="#1-0-0-2014-09-25-" name="1-0-0-2014-09-25-" class="anchor"><span class="anchor-link"></span></a>1.0.0 (2014-09-25)</h2>
+<h3><a href="#1-0-0-2014-09-25-" name="1-0-0-2014-09-25-" class="anchor"><span class="anchor-link"></span></a>1.0.0 (2014-09-25)</h3>
 <ul>
   <li>Moved to bintray</li>
 </ul>
-<h2><a href="#0-0-2-2014-09-05-" name="0-0-2-2014-09-05-" class="anchor"><span class="anchor-link"></span></a>0.0.2 (2014-09-05)</h2>
+<h3><a href="#0-0-2-2014-09-05-" name="0-0-2-2014-09-05-" class="anchor"><span class="anchor-link"></span></a>0.0.2 (2014-09-05)</h3>
 <ul>
   <li>Akka 2.3.4 -&gt; 2.3.6</li>
 </ul>
-<h2><a href="#0-0-1-2014-08-19-" name="0-0-1-2014-08-19-" class="anchor"><span class="anchor-link"></span></a>0.0.1 (2014-08-19)</h2>
+<h3><a href="#0-0-1-2014-08-19-" name="0-0-1-2014-08-19-" class="anchor"><span class="anchor-link"></span></a>0.0.1 (2014-08-19)</h3>
 <ul>
   <li>Initial Release</li>
 </ul>
@@ -597,7 +597,6 @@ class TaggingEventAdapter extends WriteEventAdapter {
     <li><a href="inmemory.html#configuration">Configuration</a></li>
     <li><a href="inmemory.html#configuring-the-query-api">Configuring the query API</a></li>
     <li><a href="inmemory.html#some-videos-about-akka-persistence-streams-and-event-sourcing">Some videos about Akka Persistence, streams and Event Sourcing</a></li>
-    <li><a href="inmemory.html#whats-new-">What&rsquo;s new?</a></li>
   </ul></li>
 </ul>
 </div>
