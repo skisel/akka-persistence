@@ -13,7 +13,7 @@ Akka-persistence-inmemory is a plugin for akka-persistence that stores journal a
 sbt
 :   @@@vars
     ```scala
-    "com.github.dnvriend" %% "akka-persistence-inmemory" % "1.3.14"
+    "com.github.dnvriend" %% "akka-persistence-inmemory" % "$inmemoryVersion$"
     ```
     @@@
 
@@ -23,7 +23,7 @@ Maven
     <dependency>
       <groupId>com.github.dnvriend</groupId>
       <artifactId>akka-persistence-inmemory_2.11</artifactId>
-      <version>1.3.14</version>
+      <version>$inmemoryVersion$</version>
     </dependency>
     ```
     @@@
@@ -32,7 +32,7 @@ Gradle
 :   @@@vars
     ```gradle
     dependencies {
-      compile group: "com.github.dnvriend", name: "akka-persistence-inmemory_2.11", version: "1.3.14"
+      compile group: "com.github.dnvriend", name: "akka-persistence-inmemory_2.11", version: "$inmemoryVersion$"
     }
     ```
     @@@

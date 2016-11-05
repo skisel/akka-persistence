@@ -12,6 +12,11 @@ object Common extends AutoPlugin {
   override def trigger = allRequirements
   override def requires = plugins.JvmPlugin && HeaderPlugin
 
+  object autoImport {
+  }
+
+  import autoImport._
+
   override lazy val projectSettings = SbtScalariform.scalariformSettings ++ Dependencies.Common ++ Seq(
         organization := "com.github.dnvriend",
         organizationName := "Dennis Vriend",

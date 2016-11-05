@@ -13,7 +13,7 @@ Akka-persistence-jdbc writes journal and snapshot entries entries to a configure
 sbt
 :   @@@vars
     ```scala
-    libraryDependencies += "com.github.dnvriend" %% "akka-persistence-jdbc" % "2.6.8"
+    libraryDependencies += "com.github.dnvriend" %% "akka-persistence-jdbc" % "$jdbcVersion$"
     ```
     @@@
 
@@ -23,7 +23,7 @@ Maven
     <dependency>
       <groupId>com.github.dnvriend</groupId>
       <artifactId>akka-persistence-jdbc_2.11</artifactId>
-      <version>2.6.8</version>
+      <version>$jdbcVersion$</version>
     </dependency>
     ```
     @@@
@@ -32,7 +32,7 @@ Gradle
 :   @@@vars
     ```gradle
     dependencies {
-      compile group: "com.github.dnvriend", name: "akka-persistence-jdbc_2.11", version: "2.6.8"
+      compile group: "com.github.dnvriend", name: "akka-persistence-jdbc_2.11", version: "$jdbcVersion$"
     }
     ```
     @@@
@@ -44,20 +44,24 @@ for free.
 
 If using Oracle, you'll also need the Slick Oracle driver:
 
-@@@ note
+```
+// to resolve the slick-extensions you need the following repo
+resolvers += "Typesafe Releases" at "http://repo.typesafe.com/typesafe/maven-releases/"
 
-test
-
-@@@
-
+libraryDependencies += "com.typesafe.slick" %% "slick-extensions" % "3.1.0"
+```
 
 ## Contribution policy
 
 Contributions via GitHub pull requests are gladly accepted from their original author. Along with any pull requests, please state that the contribution is your original work and that you license the work to the project under the project's open source license. Whether or not you state this explicitly, by submitting any copyrighted material via pull request, email, or other means you agree to license the material under the project's open source license and warrant that you have the legal authority to do so.
 
-## License
+## Code of Conduct
+Contributors all agree to follow the [W3C Code of Ethics and Professional Conduct][w3c-cond].
 
-This code is open source software licensed under the [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0.html).
+If you want to take action, feel free to contact Dennis Vriend <dnvriend@gmail.com>. You can also contact W3C Staff as explained in [W3C Procedures][w3c-proc].
+
+## License
+This source code is made available under the [Apache 2.0 License][apache]. The [quick summary of what this license means is available here](https://tldrlegal.com/license/apache-license-2.0-(apache-2.0))
 
 ## Configuration
 The new plugin relies on Slick to do create the SQL dialect for the database in use, therefore the following must be configured in `application.conf`
@@ -73,12 +77,45 @@ Configure `slick`:
   - `slick.driver.H2Driver$`
   - `com.typesafe.slick.driver.oracle.OracleDriver$`
 
+## Database Schema
+
+Postgres
+:   @@snip[application.conf](/../../../../jdbc/src/test/resources/schema/postgres/postgres-schema.sql)
+
+MySQL
+:   @@snip[application.conf](/../../../../jdbc/src/test/resources/schema/mysql/mysql-schema.sql)
+
+Oracle
+:   @@snip[application.conf](/../../../../jdbc/src/test/resources/schema/oracle/oracle-schema.sql)
+    
+H2
+:   @@snip[application.conf](/../../../../jdbc/src/test/resources/schema/h2/h2-schema.sql)
+
+
+## Configuration
+
+Default
+:   @@snip[application.conf](/../../../../jdbc/src/main/resources/reference.conf)        
+
+Postgres
+:   @@snip[application.conf](/../../../../jdbc/src/test/resources/postgres-application.conf)
+
+MySQL
+:   @@snip[application.conf](/../../../../jdbc/src/test/resources/mysql-application.conf)
+
+Oracle
+:   @@snip[application.conf](/../../../../jdbc/src/test/resources/oracle-application.conf)
+    
+H2
+:   @@snip[application.conf](/../../../../jdbc/src/test/resources/h2-application.conf)
+
+
 ## DataSource lookup by JNDI name
 The plugin uses `slick` as the database access library. Slick [supports jndi][slick-jndi] for looking up [DataSource][ds]s.
 
-To enable the JNDI lookup, you must add the following to your `application.conf`:
+To enable the JNDI lookup, you must add the following to your application.conf:
 
-```bash
+```
 jdbc-journal {
   slick {
     driver = "slick.driver.PostgresDriver$"
@@ -86,30 +123,6 @@ jdbc-journal {
   }
 }
 ```
-
-## Postgres configuration
-Base your akka-persistence-jdbc `application.conf` on [this config file][postgres-application.conf]
-
-## Postgres schema
-The schema is available [here][postgres-schema]
-
-## MySQL configuration
-Base your akka-persistence-jdbc `application.conf` on [this config file][mysql-application.conf]  
-
-## MySQL schema
-The schema is available [here][mysql-schema]
-
-## H2 configuration
-Base your akka-persistence-jdbc `application.conf` on [this config file][h2-application.conf]
-
-## H2 schema
-The schema is available [here][h2-schema]
-
-## Oracle configuration
-Base your akka-persistence-jdbc `application.conf` on [this config file][oracle-application.conf]
-
-## Oracle schema
-The schema is available [here][oracle-schema]
 
 ## How to get the ReadJournal using Scala
 The `ReadJournal` is retrieved via the `akka.persistence.query.PersistenceQuery` extension:
@@ -308,31 +321,9 @@ It is advisable to register a shutdown hook to be run when the VM exits that ter
 sys.addShutdownHook(system.terminate())
 ```
 
-# Some videos about Akka Persistence, streams and Event Sourcing
-Is Event Sourcing getting traction? I would say so:
+## Changelog
 
-- [Konrad Malawski - Akka Streams & Reactive Streams in action (2016)](https://www.youtube.com/watch?v=x62K4ObBtw4)
-- [Björn Antonsson & Konrad Malawski - Resilient Applications with Akka Persistence (2016)](https://www.youtube.com/watch?v=qqNsGomfabc)
-- [Aleksei Irbe - Akka persistence (2016)](https://www.youtube.com/watch?v=Oc9lHVVn1YQ)
-- [Greg Young - Event Sourcing is actually just functional code (2016)](https://www.youtube.com/watch?v=kZL41SMXWdM)
-- [Greg Young — A Decade of DDD, CQRS, Event Sourcing (2016)](https://www.youtube.com/watch?v=LDW0QWie21s)
-- [Packt - Introduction to Akka Persistence (2016)](https://www.youtube.com/watch?v=QwsA8hkNGOA)
-- [Paweł Szulc - Event Sourcing & Functional Programming - a pair made in heaven (2016)](https://www.youtube.com/watch?v=1rFY2SfdDoE)
-- [Konrad Malawski - Akka and the Zen of Reactive System Design (2016)](https://www.youtube.com/watch?v=Mg5ZmoMddJI)
-- [Renato Cavalcanti - Field guide to DDD/CQRS using the Scala Type System and Akka (2015)](https://www.youtube.com/watch?v=fQkKu4tTgCE)
-- [Martin Zapletal: Data in Motion - Streaming Static Data Efficiently in Akka Persistence (2016)](https://www.youtube.com/watch?v=K4FY0XKediU)
-- [Martin Krasser - Event Sourcing and CQRS with Akka Persistence and Eventuate (2015)](https://www.youtube.com/watch?v=vFVry457XLk)
-- [Duncan DeVore - CQRS/ES with Scala and Akka Persistence (2015)](https://www.youtube.com/watch?v=uA2AsZW0I7A)
-- [Sander Mak - Event-Sourced Architectures with Akka (2015)](https://www.youtube.com/watch?v=gvsRl6xZiiE)
-- [Sidharth Khattri - Akka Persistence | Event Sourcing (2015)](https://www.youtube.com/watch?v=yAI71_smS34)
-- [Michał Płachta - Building multiplayer game using Reactive Streams](https://www.youtube.com/watch?v=iKTFalVfoSU)
-- [Patrik Nordwall - Intro to Akka persistence (2014)](https://www.youtube.com/watch?v=r5lecCBazvE)
-- [Greg Young - Event Sourcing(2014)](https://www.youtube.com/watch?v=8JKjvY4etTY)
-
-
-## What's new?
-
-## 2.6.8 (2016-11-03)
+### 2.6.8 (2016-11-03)
   - Akka 2.4.10 -> 2.4.12
   - Fixed 'Snapshot storage BLOB handling' by [Sergey Kisel][skisel], thanks!
   - Filter out events that have already been deleted.
@@ -341,33 +332,33 @@ Is Event Sourcing getting traction? I would say so:
   - The akka-persistence-jdbc plugin only supports the `akka.persistence.query.NoOffset` and the `akka.persistence.query.Sequence` offset types.
   - There is no support for the `akka.persistence.query.TimeBasedUUID` offset type. When used, akka-persistence-jdbc will throw an IllegalArgumentException if offered to the read-journal.
 
-## 2.6.7 (2016-09-07)
+### 2.6.7 (2016-09-07)
   - Merged PR #75 [jroper][jroper] - Removed binary dependency on slick-extensions, thanks!
   - Please note, slick-extensions 3.1.0 are open source, but the license didn't change, so you cannot use it for free, you still need a [Lightbend Subscription](https://www.lightbend.com/platform/subscription).
   - Akka 2.4.9 -> 2.4.10
 
-## 2.6.6 (2016-08-22)
+### 2.6.6 (2016-08-22)
   - Merged PR #66 [monktastic][monktastic], eventsByPersistenceId should terminate when toSequenceNr is reached, thanks!
 
-## 2.6.5 (2016-08-20)
+### 2.6.5 (2016-08-20)
   - Akka 2.4.9-RC2 -> 2.4.9
 
-## 2.6.5-RC2 (2016-08-06)
+### 2.6.5-RC2 (2016-08-06)
   - Akka 2.4.9-RC1 -> 2.4.9-RC2
 
-## 2.6.5-RC1 (2016-08-03)
+### 2.6.5-RC1 (2016-08-03)
   - Akka 2.4.8 -> 2.4.9-RC1
 
-## 2.6.4 (2016-07-30)
+### 2.6.4 (2016-07-30)
   - Merged PR #62 [jtysper][jtysper], Fix Oracle support, thanks!
 
-## 2.6.3 (2016-07-27)
+### 2.6.3 (2016-07-27)
   - Merged PR #61 [Nikolay Tatarinov][rockjam], Sql optimizations, thanks!
 
-## 2.6.2 (2016-07-26)
+### 2.6.2 (2016-07-26)
   - Fix for issue #60 where an immutable.Vector was trying to be matched by the serializer in TrySeq stage.
 
-## 2.6.1 (2016-07-23)
+### 2.6.1 (2016-07-23)
   - Support for the __non-official__ bulk loading interface [akka.persistence.query.scaladsl.EventWriter](https://github.com/dnvriend/akka-persistence-query-writer/blob/master/src/main/scala/akka/persistence/query/scaladsl/EventWriter.scala)
     added. I need this interface to load massive amounts of data, that will be processed by many actors, but initially I just want to create and store one or
     more events belonging to an actor, that will handle the business rules eventually. Using actors or a shard region for that matter, just gives to much
@@ -375,7 +366,7 @@ Is Event Sourcing getting traction? I would say so:
     responsibility of ensuring the integrity of the journal on you. This means when some strange things are happening caused by wrong loading of the data,
     and therefore breaking the integrity and ruleset of akka-persistence, all the responsibility on fixing it is on you, and not on the Akka team.
 
-- 2.6.0 (2016-07-17)
+### 2.6.0 (2016-07-17)
   - Removed the `deleted_to` and `created` columns of the `journal` table to become compatible with
    `akka-persistence-query` spec that states that all messages should be replayed, even deleted ones
   - New schema's are available for [postgres][postgres-schema], [mysql][mysql-schema] and [h2][h2-schema]
@@ -383,22 +374,22 @@ Is Event Sourcing getting traction? I would say so:
   - Codacy code cleanup
   - There is still no support for Oracle since the addition of the ordering SERIAL column which Oracle does not support. Help to add Oracle support is appreciated.
 
-- 2.5.2 (2016-07-03)
+### 2.5.2 (2016-07-03)
   - The `eventsByTag` query should now be fixed.
 
-- 2.5.1 (2016-07-03)
+### 2.5.1 (2016-07-03)
   - There is no 2.5.1; error while releasing
 
-- 2.5.0 (2016-06-29)
+### 2.5.0 (2016-06-29)
   - Changed the database schema to include two new columns, an `ordering` and a `deleted` column. Both fields are needed
     to support the akka-persistence-query API. The `ordering` column is needed to register the total ordering of events
     an is used for the offset for both `*byTag` queries. The deleted column is not yet used.
   - Known issue: will not work on Oracle (yet).
 
-- 2.4.1 (2016-06-20)
+### 2.4.1 (2016-06-20)
   - Merged PR #57 [Filipe Cristóvão][fcristovao], Added support for the H2 database, thanks!  
 
-- 2.4.0 (2016-06-19)
+### 2.4.0 (2016-06-19)
   - Merged PR #55 [Filipe Cristóvão][fcristovao], Redesign of the serializer/deserializer to make it possible to override it to implement your own serialization strategy, thanks!  
   - This is potentially a breaking change for users that implement there own DAO or extend and override some of the features of the default one:
     1. The DAO package has been change from `akka.persistence.jdbc.dao.bytea` to `akka.persistence.jdbc.dao.bytea.journal`
@@ -406,21 +397,21 @@ Is Event Sourcing getting traction? I would say so:
   - Removed the `jdbc-journal.serialization`, `jdbc-snapshot-store.serialization` and `jdbc-read-journal.serialization` setting as the DAOs have to implement their own serialization strategy.
   - The following interfaces `akka.persistence.jdbc.dao.JournalDao`, `akka.persistence.jdbc.dao.ReadJournalDao` and `akka.persistence.jdbc.dao.SnapshotDao` have been changed as the DAOs have to implement their own strategy, they'll have to work with `AtomicWrite`, `PersistentRepr` and `Any` as types.   
 
-- 2.3.3 (2016-06-13)
+### 2.3.3 (2016-06-13)
   - Fix for the async query `eventsByTag` that failed when using an Oracle database.
 
-- 2.3.2 (2016-06-12)
+### 2.3.2 (2016-06-12)
   - This release has a configuration how the the slick database driver gets resolved. The following driver names must be used:
     - `slick.driver.PostgresDriver$`
     - `slick.driver.MySQLDriver$`
     - `com.typesafe.slick.driver.oracle.OracleDriver$`
   - The journal, snapshot and readjournal plugins now all use defaults as stated in the reference.conf, it is not necessary to define properties when using a plugin-id that has not been defined in reference.conf          
 
-- 2.3.1 (2016-06-10)
+### 2.3.1 (2016-06-10)
   - Async queries should take a max number of elements from the result set according to the
   `jdbc-read-journal.max-buffer-size` configuration. This should result in better memory usage and better IO performance.
 
-- 2.3.0 (2016-06-10)
+### 2.3.0 (2016-06-10)
   - This is a feature, configuration and (maybe) API breaking release when you rely on the DAO's, my apologies.
   - Killed some [feature-creep], this will result in a better design of the plugin.
     - Removed support for the Varchar (base64/text based serialization),
@@ -429,49 +420,49 @@ Is Event Sourcing getting traction? I would say so:
   - Implemented async queries, fixes issue #53 All async queries do not work as expected
   - Implemented akka persistence plugin scoping strategy, fixes issue #42 Make it possible to have multiple instances of the plugin (configured differently)
 
-- 2.2.25 (2016-06-08)
+### 2.2.25 (2016-06-08)
   - Merged PR #54 [Charith Ellawala][ellawala] Honour the schemaName setting for the snapshot table, thanks!
   - Compiling for Java 8 as Akka 2.4.x dropped support for Java 6 and 7 and only works on Java 8 and above  
 
-- 2.2.24 (2016-06-05)
+### 2.2.24 (2016-06-05)
   - Akka 2.4.6 -> 2.4.7
 
-- 2.2.23 (2016-05-25)
+### 2.2.23 (2016-05-25)
   - Akka 2.4.5 -> 2.4.6
 
-- 2.2.22 (2016-05-18)
+### 2.2.22 (2016-05-18)
   - Merged PR #52 [Gopal Shah][shah] for issue [#44 - Unable to differentiate between persistence failures and serialization issues](https://github.com/dnvriend/akka-persistence-jdbc/issues/51), thanks!
   - Akka 2.4.4 -> 2.4.5
 
-- 2.2.21 (2016-04-30)
+### 2.2.21 (2016-04-30)
   - Disabled the default dependency on HikariCP-Java6 v2.3.7,
   - Added dependency on HikariCP v2.4.6 for better performance and bug fixes
 
-- 2.2.20 (2016-04-29)
+### 2.2.20 (2016-04-29)
   - Merged PR #50 [Andrey Kouznetsov][kouznetsov] for issue [#44 - Leaking connections](https://github.com/dnvriend/akka-persistence-jdbc/issues/44), thanks!
 
-- 2.2.19 (2016-04-26)
+### 2.2.19 (2016-04-26)
   - Merged PR #46 [Andrey Kouznetsov][kouznetsov] Significant performance boost by using compiled queries, thanks!
   - Merged PR #47 [Andrey Kouznetsov][kouznetsov] Ability to get Database instance from JNDI, thanks!
   - **_Disable the async queries as they are implemented very sketchy, please use the synchronous query API with client side polling._**  
 
-- 2.2.18 (2016-04-19)
+### 2.2.18 (2016-04-19)
   - Text based serialization formats
 
-- 2.2.17 (2016-04-14)
+### 2.2.17 (2016-04-14)
   - Fix for [Issue #41 - Provide a way to shut-down connections explicitly](https://github.com/dnvriend/akka-persistence-jdbc/issues/41), the database connections will be automatically shut down when the ActorSystem shuts down when calling `system.terminate()` in which `system` is the ActorSystem instance.
   - Akka 2.4.3 -> 2.4.4
 
-- 2.2.16 (2016-04-01)
+### 2.2.16 (2016-04-01)
   - Akka 2.4.2 -> 2.4.3
 
-- 2.2.15 (2016-03-18)
+### 2.2.15 (2016-03-18)
   - Merged PR #37 [William Turner][turner] Make offset sequential on eventsByTag queries, thanks!
 
-- 2.2.14 (2016-03-17)
+### 2.2.14 (2016-03-17)
   - Determine events where appropriate by using an offset using the query api was not tested and thus the implementation was incorrect. This has been corrected and the documentation altered where appropriate.
 
-- 2.2.13 (2016-03-17)
+### 2.2.13 (2016-03-17)
   - Release to enable Bintray to sync with JCenter, so no big changes here  
 
 - 2.2.12 (2016-03-17)
@@ -690,15 +681,6 @@ Is Event Sourcing getting traction? I would say so:
 - 0.0.1 (2014-05-23)
  - Initial commit
 
-## Code of Conduct
-Contributors all agree to follow the [W3C Code of Ethics and Professional Conduct][w3c-cond].
-
-If you want to take action, feel free to contact Dennis Vriend <dnvriend@gmail.com>. You can also contact W3C Staff as explained in [W3C Procedures][w3c-proc].
-
-## License
-This source code is made available under the [Apache 2.0 License][apache]. The [quick summary of what this license means is available here](https://tldrlegal.com/license/apache-license-2.0-(apache-2.0))
-
-Have fun!
 
 [monktastic]: https://github.com/monktastic
 [fcristovao]: https://github.com/fcristovao

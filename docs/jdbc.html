@@ -121,42 +121,623 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 </code></pre></dd>
 </dl>
 <p>Please note <a href="https://github.com/dnvriend/akka-persistence-jdbc/pull/75">PR #75 - Removed binary dependency on slick-extensions</a>, if you are using the Oracle driver, you must have a <a href="https://www.lightbend.com/platform/subscription">Lightbend subscription</a>. I have misinterpreted Lightbend open sourcing slick-extensions 3.1.0 as a change to the license, it didn&rsquo;t so you <strong>cannot</strong> use it for free.</p>
-<p>If using Oracle, you&rsquo;ll also need the Slick Oracle driver:</p><div class="callout note "><div class="callout-title">Note</div>
-<p>test</p></div>
+<p>If using Oracle, you&rsquo;ll also need the Slick Oracle driver:</p>
+<pre class="prettyprint"><code>// to resolve the slick-extensions you need the following repo
+resolvers += &quot;Typesafe Releases&quot; at &quot;http://repo.typesafe.com/typesafe/maven-releases/&quot;
+
+libraryDependencies += &quot;com.typesafe.slick&quot; %% &quot;slick-extensions&quot; % &quot;3.1.0&quot;
+</code></pre>
 <h2><a href="#contribution-policy" name="contribution-policy" class="anchor"><span class="anchor-link"></span></a>Contribution policy</h2>
 <p>Contributions via GitHub pull requests are gladly accepted from their original author. Along with any pull requests, please state that the contribution is your original work and that you license the work to the project under the project&rsquo;s open source license. Whether or not you state this explicitly, by submitting any copyrighted material via pull request, email, or other means you agree to license the material under the project&rsquo;s open source license and warrant that you have the legal authority to do so.</p>
+<h2><a href="#code-of-conduct" name="code-of-conduct" class="anchor"><span class="anchor-link"></span></a>Code of Conduct</h2>
+<p>Contributors all agree to follow the <a href="http://www.w3.org/Consortium/cepc/">W3C Code of Ethics and Professional Conduct</a>.</p>
+<p>If you want to take action, feel free to contact Dennis Vriend <a href="mailto:&#100;n&#118;&#x72;&#x69;&#x65;&#x6e;&#100;&#x40;&#x67;m&#97;&#x69;&#108;.&#99;&#111;&#109;">&#100;n&#118;&#x72;&#x69;&#x65;&#x6e;&#100;&#x40;&#x67;m&#97;&#x69;&#108;.&#99;&#111;&#109;</a>. You can also contact W3C Staff as explained in <a href="http://www.w3.org/Consortium/pwe/#Procedures">W3C Procedures</a>.</p>
 <h2><a href="#license" name="license" class="anchor"><span class="anchor-link"></span></a>License</h2>
-<p>This code is open source software licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache 2.0 License</a>.</p>
+<p>This source code is made available under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 License</a>. The [quick summary of what this license means is available here](<a href="https://tldrlegal.com/license/apache-license-2.0-(apache-2.0)">https://tldrlegal.com/license/apache-license-2.0-(apache-2.0)</a>)</p>
 <h2><a href="#configuration" name="configuration" class="anchor"><span class="anchor-link"></span></a>Configuration</h2>
 <p>The new plugin relies on Slick to do create the SQL dialect for the database in use, therefore the following must be configured in <code>application.conf</code></p>
 <p>Configure <code>akka-persistence</code>: - instruct akka persistence to use the <code>jdbc-journal</code> plugin, - instruct akka persistence to use the <code>jdbc-snapshot-store</code> plugin,</p>
 <p>Configure <code>slick</code>: - The following slick drivers are supported:  - <code>slick.driver.PostgresDriver$</code>  - <code>slick.driver.MySQLDriver$</code>  - <code>slick.driver.H2Driver$</code>  - <code>com.typesafe.slick.driver.oracle.OracleDriver$</code></p>
+<h2><a href="#database-schema" name="database-schema" class="anchor"><span class="anchor-link"></span></a>Database Schema</h2>
+<dl>
+  <dt>Postgres</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-sql">DROP TABLE IF EXISTS public.journal;
+
+CREATE TABLE IF NOT EXISTS public.journal (
+  ordering BIGSERIAL,
+  persistence_id VARCHAR(255) NOT NULL,
+  sequence_number BIGINT NOT NULL,
+  deleted BOOLEAN DEFAULT FALSE,
+  tags VARCHAR(255) DEFAULT NULL,
+  message BYTEA NOT NULL,
+  PRIMARY KEY(persistence_id, sequence_number)
+);
+
+DROP TABLE IF EXISTS public.snapshot;
+
+CREATE TABLE IF NOT EXISTS public.snapshot (
+  persistence_id VARCHAR(255) NOT NULL,
+  sequence_number BIGINT NOT NULL,
+  created BIGINT NOT NULL,
+  snapshot BYTEA NOT NULL,
+  PRIMARY KEY(persistence_id, sequence_number)
+);</code></pre></dd>
+  <dt>MySQL</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-sql">DROP TABLE IF EXISTS journal;
+
+CREATE TABLE IF NOT EXISTS journal (
+  ordering SERIAL,
+  persistence_id VARCHAR(255) NOT NULL,
+  sequence_number BIGINT NOT NULL,
+  deleted BOOLEAN DEFAULT FALSE,
+  tags VARCHAR(255) DEFAULT NULL,
+  message BLOB NOT NULL,
+  PRIMARY KEY(persistence_id, sequence_number)
+);
+
+DROP TABLE IF EXISTS snapshot;
+
+CREATE TABLE IF NOT EXISTS snapshot (
+  persistence_id VARCHAR(255) NOT NULL,
+  sequence_number BIGINT NOT NULL,
+  created BIGINT NOT NULL,
+  snapshot BLOB NOT NULL,
+  PRIMARY KEY (persistence_id, sequence_number)
+);</code></pre></dd>
+  <dt>Oracle</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-sql">CREATE SEQUENCE &quot;ordering_seq&quot; START WITH 1 INCREMENT BY 1 NOMAXVALUE
+/
+
+CREATE TABLE &quot;journal&quot; (
+  &quot;ordering&quot; NUMERIC,
+  &quot;deleted&quot; char check (&quot;deleted&quot; in (0,1)),
+  &quot;persistence_id&quot; VARCHAR(255) NOT NULL,
+  &quot;sequence_number&quot; NUMERIC NOT NULL,
+  &quot;tags&quot; VARCHAR(255) DEFAULT NULL,
+  &quot;message&quot; BLOB NOT NULL,
+  PRIMARY KEY(&quot;persistence_id&quot;, &quot;sequence_number&quot;)
+)
+/
+
+CREATE OR REPLACE TRIGGER &quot;ordering_seq_trigger&quot;
+BEFORE INSERT ON &quot;journal&quot;
+FOR EACH ROW
+BEGIN
+  SELECT &quot;ordering_seq&quot;.NEXTVAL INTO :NEW.&quot;ordering&quot; FROM DUAL;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE &quot;reset_sequence&quot;
+IS
+  l_value NUMBER;
+BEGIN
+  EXECUTE IMMEDIATE &#39;SELECT &quot;ordering_seq&quot;.nextval FROM dual&#39; INTO l_value;
+  EXECUTE IMMEDIATE &#39;ALTER SEQUENCE &quot;ordering_seq&quot; INCREMENT BY -&#39; || l_value || &#39; MINVALUE 0&#39;;
+  EXECUTE IMMEDIATE &#39;SELECT &quot;ordering_seq&quot;.nextval FROM dual&#39; INTO l_value;
+  EXECUTE IMMEDIATE &#39;ALTER SEQUENCE &quot;ordering_seq&quot; INCREMENT BY 1 MINVALUE 0&#39;;
+END;
+/
+
+CREATE TABLE &quot;snapshot&quot; (
+  &quot;persistence_id&quot; VARCHAR(255) NOT NULL,
+  &quot;sequence_number&quot; NUMERIC NOT NULL,
+  &quot;created&quot; NUMERIC NOT NULL,
+  &quot;snapshot&quot; BLOB NOT NULL,
+  PRIMARY KEY (&quot;persistence_id&quot;, &quot;sequence_number&quot;)
+)
+/</code></pre></dd>
+  <dt>H2</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-sql">DROP TABLE IF EXISTS PUBLIC.journal;
+
+CREATE TABLE IF NOT EXISTS PUBLIC.journal (
+  ordering BIGINT AUTO_INCREMENT,
+  persistence_id VARCHAR(255) NOT NULL,
+  sequence_number BIGINT NOT NULL,
+  deleted BOOLEAN DEFAULT FALSE,
+  tags VARCHAR(255) DEFAULT NULL,
+  message BYTEA NOT NULL,
+  PRIMARY KEY(persistence_id, sequence_number)
+);
+
+DROP TABLE IF EXISTS PUBLIC.snapshot;
+
+CREATE TABLE IF NOT EXISTS PUBLIC.snapshot (
+  persistence_id VARCHAR(255) NOT NULL,
+  sequence_number BIGINT NOT NULL,
+  created BIGINT NOT NULL,
+  snapshot BYTEA NOT NULL,
+  PRIMARY KEY(persistence_id, sequence_number)
+);</code></pre></dd>
+</dl>
+<h2><a href="#configuration" name="configuration" class="anchor"><span class="anchor-link"></span></a>Configuration</h2>
+<dl>
+  <dt>Default</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-conf"># Copyright 2016 Dennis Vriend
+#
+# Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# the akka-persistence-journal in use
+jdbc-journal {
+  class = &quot;akka.persistence.jdbc.journal.JdbcAsyncWriteJournal&quot;
+
+  tables {
+    journal {
+      tableName = &quot;journal&quot;
+      schemaName = &quot;&quot;
+      columnNames {
+        ordering = &quot;ordering&quot;
+        deleted = &quot;deleted&quot;
+        persistenceId = &quot;persistence_id&quot;
+        sequenceNumber = &quot;sequence_number&quot;
+        created = &quot;created&quot;
+        tags = &quot;tags&quot;
+        message = &quot;message&quot;
+      }
+    }
+  }
+
+  tagSeparator = &quot;,&quot;
+
+  dao = &quot;akka.persistence.jdbc.journal.dao.ByteArrayJournalDao&quot;
+
+  slick {
+    driver = &quot;slick.driver.PostgresDriver$&quot;
+    db {
+      host = &quot;boot2docker&quot;
+      port = &quot;5432&quot;
+      name = &quot;docker&quot;
+
+      url = &quot;jdbc:postgresql://boot2docker:5432/docker&quot;
+      user = &quot;docker&quot;
+      password = &quot;docker&quot;
+      driver = &quot;org.postgresql.Driver&quot;
+
+      // hikariCP settings; see: https://github.com/brettwooldridge/HikariCP
+
+      // read: https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing
+      // slick will use an async executor with a fixed size queue of 10.000 objects
+      // The async executor is a connection pool for asynchronous execution of blocking I/O actions.
+      // This is used for the asynchronous query execution API on top of blocking back-ends like JDBC.
+      queueSize = 10000 // number of objects that can be queued by the async exector
+
+      connectionTimeout = 30000 // This property controls the maximum number of milliseconds that a client (that&#39;s you) will wait for a connection from the pool. If this time is exceeded without a connection becoming available, a SQLException will be thrown. 1000ms is the minimum value. Default: 30000 (30 seconds)
+      validationTimeout = 5000 // This property controls the maximum amount of time that a connection will be tested for aliveness. This value must be less than the connectionTimeout. The lowest accepted validation timeout is 1000ms (1 second). Default: 5000
+      idleTimeout = 600000 // 10 minutes: This property controls the maximum amount of time that a connection is allowed to sit idle in the pool. Whether a connection is retired as idle or not is subject to a maximum variation of +30 seconds, and average variation of +15 seconds. A connection will never be retired as idle before this timeout. A value of 0 means that idle connections are never removed from the pool. Default: 600000 (10 minutes)
+      maxLifetime = 1800000 // 30 minutes: This property controls the maximum lifetime of a connection in the pool. When a connection reaches this timeout it will be retired from the pool, subject to a maximum variation of +30 seconds. An in-use connection will never be retired, only when it is closed will it then be removed. We strongly recommend setting this value, and it should be at least 30 seconds less than any database-level connection timeout. A value of 0 indicates no maximum lifetime (infinite lifetime), subject of course to the idleTimeout setting. Default: 1800000 (30 minutes)
+      leakDetectionThreshold = 0 // This property controls the amount of time that a connection can be out of the pool before a message is logged indicating a possible connection leak. A value of 0 means leak detection is disabled. Lowest acceptable value for enabling leak detection is 2000 (2 secs). Default: 0
+
+      initializationFailFast = false // This property controls whether the pool will &quot;fail fast&quot; if the pool cannot be seeded with initial connections successfully. If you want your application to start even when the database is down/unavailable, set this property to false. Default: true
+
+      keepAliveConnection = on // ensures that the database does not get dropped while we are using it
+
+      numThreads = 20 // 5 * number of cores - The number of threads determines how many things you can *run* in parallel on the database server
+      maxConnections = 40 // 2 * numThreads + 1 (if running on an SSD) - the number of connections determines you many things you can *keep in memory* at the same time on the database server
+      minConnections = 1
+    }
+  }
+}
+
+# the akka-persistence-snapshot-store in use
+jdbc-snapshot-store {
+  class = &quot;akka.persistence.jdbc.snapshot.JdbcSnapshotStore&quot;
+
+  tables {
+    snapshot {
+      tableName = &quot;snapshot&quot;
+      schemaName = &quot;&quot;
+      columnNames {
+        persistenceId = &quot;persistence_id&quot;
+        sequenceNumber = &quot;sequence_number&quot;
+        created = &quot;created&quot;
+        snapshot = &quot;snapshot&quot;
+      }
+    }
+  }
+
+  dao = &quot;akka.persistence.jdbc.snapshot.dao.ByteArraySnapshotDao&quot;
+
+  slick {
+    driver = &quot;slick.driver.PostgresDriver$&quot;
+    db {
+      host = &quot;boot2docker&quot;
+      port = &quot;5432&quot;
+      name = &quot;docker&quot;
+
+      url = &quot;jdbc:postgresql://boot2docker:5432/docker&quot;
+      user = &quot;docker&quot;
+      password = &quot;docker&quot;
+      driver = &quot;org.postgresql.Driver&quot;
+
+      // hikariCP settings; see: https://github.com/brettwooldridge/HikariCP
+
+      // read: https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing
+      // slick will use an async executor with a fixed size queue of 10.000 objects
+      // The async executor is a connection pool for asynchronous execution of blocking I/O actions.
+      // This is used for the asynchronous query execution API on top of blocking back-ends like JDBC.
+      queueSize = 10000 // number of objects that can be queued by the async exector
+
+      connectionTimeout = 30000 // This property controls the maximum number of milliseconds that a client (that&#39;s you) will wait for a connection from the pool. If this time is exceeded without a connection becoming available, a SQLException will be thrown. 1000ms is the minimum value. Default: 30000 (30 seconds)
+      validationTimeout = 5000 // This property controls the maximum amount of time that a connection will be tested for aliveness. This value must be less than the connectionTimeout. The lowest accepted validation timeout is 1000ms (1 second). Default: 5000
+      idleTimeout = 600000 // 10 minutes: This property controls the maximum amount of time that a connection is allowed to sit idle in the pool. Whether a connection is retired as idle or not is subject to a maximum variation of +30 seconds, and average variation of +15 seconds. A connection will never be retired as idle before this timeout. A value of 0 means that idle connections are never removed from the pool. Default: 600000 (10 minutes)
+      maxLifetime = 1800000 // 30 minutes: This property controls the maximum lifetime of a connection in the pool. When a connection reaches this timeout it will be retired from the pool, subject to a maximum variation of +30 seconds. An in-use connection will never be retired, only when it is closed will it then be removed. We strongly recommend setting this value, and it should be at least 30 seconds less than any database-level connection timeout. A value of 0 indicates no maximum lifetime (infinite lifetime), subject of course to the idleTimeout setting. Default: 1800000 (30 minutes)
+      leakDetectionThreshold = 0 // This property controls the amount of time that a connection can be out of the pool before a message is logged indicating a possible connection leak. A value of 0 means leak detection is disabled. Lowest acceptable value for enabling leak detection is 2000 (2 secs). Default: 0
+
+      initializationFailFast = false // This property controls whether the pool will &quot;fail fast&quot; if the pool cannot be seeded with initial connections successfully. If you want your application to start even when the database is down/unavailable, set this property to false. Default: true
+
+      keepAliveConnection = on // ensures that the database does not get dropped while we are using it
+
+      numThreads = 20 // 5 * number of cores
+      maxConnections = 40 // 2 * numThreads
+      minConnections = 1
+    }
+  }
+}
+
+# the akka-persistence-query provider in use
+jdbc-read-journal {
+  class = &quot;akka.persistence.jdbc.query.JdbcReadJournalProvider&quot;
+
+  # New events are retrieved (polled) with this interval.
+  refresh-interval = &quot;1s&quot;
+
+  # How many events to fetch in one query (replay) and keep buffered until they
+  # are delivered downstreams.
+  max-buffer-size = &quot;500&quot;
+
+  # How many events should be written in the bulk insert
+  # 250 seems a sweet spot for a macbook pro i7 16GB that runs postgres
+  # on docker-platform for mac 1.12.0-rc4-beta20 (build: 10404)
+  batch-size = &quot;250&quot;
+
+  dao = &quot;akka.persistence.jdbc.query.dao.ByteArrayReadJournalDao&quot;
+
+  tables {
+    journal {
+      tableName = &quot;journal&quot;
+      schemaName = &quot;&quot;
+      columnNames {
+        ordering = &quot;ordering&quot;
+        persistenceId = &quot;persistence_id&quot;
+        sequenceNumber = &quot;sequence_number&quot;
+        created = &quot;created&quot;
+        tags = &quot;tags&quot;
+        message = &quot;message&quot;
+      }
+    }
+  }
+
+  tagSeparator = &quot;,&quot;
+
+  slick {
+    driver = &quot;slick.driver.PostgresDriver$&quot;
+    db {
+      host = &quot;boot2docker&quot;
+      port = &quot;5432&quot;
+      name = &quot;docker&quot;
+
+      url = &quot;jdbc:postgresql://boot2docker:5432/docker&quot;
+      user = &quot;docker&quot;
+      password = &quot;docker&quot;
+      driver = &quot;org.postgresql.Driver&quot;
+
+      // hikariCP settings; see: https://github.com/brettwooldridge/HikariCP
+
+      // read: https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing
+      // slick will use an async executor with a fixed size queue of 10.000 objects
+      // The async executor is a connection pool for asynchronous execution of blocking I/O actions.
+      // This is used for the asynchronous query execution API on top of blocking back-ends like JDBC.
+      queueSize = 10000 // number of objects that can be queued by the async exector
+
+      connectionTimeout = 30000 // This property controls the maximum number of milliseconds that a client (that&#39;s you) will wait for a connection from the pool. If this time is exceeded without a connection becoming available, a SQLException will be thrown. 1000ms is the minimum value. Default: 30000 (30 seconds)
+      validationTimeout = 5000 // This property controls the maximum amount of time that a connection will be tested for aliveness. This value must be less than the connectionTimeout. The lowest accepted validation timeout is 1000ms (1 second). Default: 5000
+      idleTimeout = 600000 // 10 minutes: This property controls the maximum amount of time that a connection is allowed to sit idle in the pool. Whether a connection is retired as idle or not is subject to a maximum variation of +30 seconds, and average variation of +15 seconds. A connection will never be retired as idle before this timeout. A value of 0 means that idle connections are never removed from the pool. Default: 600000 (10 minutes)
+      maxLifetime = 1800000 // 30 minutes: This property controls the maximum lifetime of a connection in the pool. When a connection reaches this timeout it will be retired from the pool, subject to a maximum variation of +30 seconds. An in-use connection will never be retired, only when it is closed will it then be removed. We strongly recommend setting this value, and it should be at least 30 seconds less than any database-level connection timeout. A value of 0 indicates no maximum lifetime (infinite lifetime), subject of course to the idleTimeout setting. Default: 1800000 (30 minutes)
+      leakDetectionThreshold = 0 // This property controls the amount of time that a connection can be out of the pool before a message is logged indicating a possible connection leak. A value of 0 means leak detection is disabled. Lowest acceptable value for enabling leak detection is 2000 (2 secs). Default: 0
+
+      initializationFailFast = false // This property controls whether the pool will &quot;fail fast&quot; if the pool cannot be seeded with initial connections successfully. If you want your application to start even when the database is down/unavailable, set this property to false. Default: true
+
+      keepAliveConnection = on // ensures that the database does not get dropped while we are using it
+
+      numThreads = 20 // 5 * number of cores
+      maxConnections = 40 // 2 * numThreads
+      minConnections = 1
+    }
+  }
+}</code></pre></dd>
+  <dt>Postgres</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-conf"># Copyright 2016 Dennis Vriend
+#
+# Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+include &quot;general.conf&quot;
+include &quot;docker.conf&quot;
+
+jdbc-journal {
+  slick = ${slick}
+  slick.db.numThreads = 8
+  slick.db.maxConnections = 10
+  slick.db.minConnections = 1
+
+  recovery-event-timeout = 60m
+}
+
+# the akka-persistence-snapshot-store in use
+jdbc-snapshot-store {
+  slick = ${slick}
+  slick.db.numThreads = 8
+  slick.db.maxConnections = 5
+  slick.db.minConnections = 1
+}
+
+# the akka-persistence-query provider in use
+jdbc-read-journal {
+  refresh-interval = &quot;100ms&quot;
+
+  max-buffer-size = &quot;500&quot;
+
+  batch-size = &quot;250&quot;
+
+  slick = ${slick}
+  slick.db.numThreads = 8
+  slick.db.maxConnections = 5
+  slick.db.minConnections = 1
+}
+
+slick {
+  driver = &quot;slick.driver.PostgresDriver$&quot;
+  db {
+    host = &quot;boot2docker&quot;
+    host = ${?POSTGRES_HOST}
+    url = &quot;jdbc:postgresql://&quot;${slick.db.host}&quot;:5432/docker?reWriteBatchedInserts=true&quot;
+    user = &quot;docker&quot;
+    user = ${?POSTGRES_USER}
+    password = &quot;docker&quot;
+    password = ${?POSTGRES_PASSWORD}
+    driver = &quot;org.postgresql.Driver&quot;
+    connectionTestQuery = &quot;SELECT 1&quot; // postgres doesnt support connection timeout
+  }
+}</code></pre></dd>
+  <dt>MySQL</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-conf"># Copyright 2016 Dennis Vriend
+#
+# Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+include &quot;general.conf&quot;
+include &quot;docker.conf&quot;
+
+jdbc-journal {
+  slick = ${slick}
+  slick.db.numThreads = 20
+  slick.db.maxConnections = 40
+  slick.db.minConnections = 1
+
+  recovery-event-timeout = 60m
+}
+
+# the akka-persistence-snapshot-store in use
+jdbc-snapshot-store {
+  slick = ${slick}
+  slick.db.numThreads = 20
+  slick.db.maxConnections = 40
+  slick.db.minConnections = 1
+}
+
+# the akka-persistence-query provider in use
+jdbc-read-journal {
+  refresh-interval = &quot;100ms&quot;
+
+  max-buffer-size = &quot;250&quot;
+
+  slick = ${slick}
+  slick.db.numThreads = 20
+  slick.db.maxConnections = 40
+  slick.db.minConnections = 1
+}
+
+slick {
+  driver = &quot;slick.driver.MySQLDriver$&quot;
+  db {
+    host = ${docker.host}
+    host = ${?MYSQL_HOST}
+    port = &quot;3306&quot;
+    port = ${?MYSQL_PORT}
+    url = &quot;jdbc:mysql://&quot;${slick.db.host}&quot;:&quot;${slick.db.port}&quot;/mysql?cachePrepStmts=true&amp;cacheCallableStmts=true&amp;cacheServerConfiguration=true&amp;useLocalSessionState=true&amp;elideSetAutoCommits=true&amp;alwaysSendSetIsolation=false&amp;enableQueryTimeouts=false&amp;connectionAttributes=none&amp;verifyServerCertificate=false&amp;useSSL=false&amp;useUnicode=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=UTC&amp;rewriteBatchedStatements=true&quot;
+    user = &quot;root&quot;
+    user = ${?MYSQL_USER}
+    password = &quot;root&quot;
+    password = ${?MYSQL_PASSWORD}
+    driver = &quot;com.mysql.cj.jdbc.Driver&quot;
+    connectionTestQuery = &quot;SELECT 1&quot;
+  }
+}</code></pre></dd>
+  <dt>Oracle</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-conf"># Copyright 2016 Dennis Vriend
+#
+# Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+include &quot;general.conf&quot;
+include &quot;docker.conf&quot;
+
+jdbc-journal {
+  tables {
+    journal {
+      tableName = &quot;journal&quot;
+      schemaName = &quot;SYSTEM&quot;
+    }
+  }
+
+  slick = ${slick}
+  slick.db.numThreads = 8
+  slick.db.maxConnections = 5
+  slick.db.minConnections = 1
+  slick.db.connectionTimeout = 1800000 // 30 minutes
+}
+
+# the akka-persistence-snapshot-store in use
+jdbc-snapshot-store {
+  tables {
+    snapshot {
+      tableName = &quot;snapshot&quot;
+      schemaName = &quot;SYSTEM&quot;
+    }
+  }
+
+  slick = ${slick}
+  slick.db.numThreads = 8
+  slick.db.maxConnections = 5
+  slick.db.minConnections = 1
+  slick.db.connectionTimeout = 1800000 // 30 minutes
+}
+
+# the akka-persistence-query provider in use
+jdbc-read-journal {
+
+  refresh-interval = &quot;100ms&quot;
+
+  max-buffer-size = &quot;500&quot;
+
+  tables {
+    journal {
+      tableName = &quot;journal&quot;
+      schemaName = &quot;SYSTEM&quot;
+    }
+  }
+
+  slick = ${slick}
+  slick.db.numThreads = 100
+  slick.db.maxConnections = 10
+  slick.db.minConnections = 1
+  slick.db.connectionTimeout = 1800000 // 30 minutes
+}
+
+slick {
+  driver = &quot;com.typesafe.slick.driver.oracle.OracleDriver$&quot;
+  db {
+    host = ${docker.host}
+    host = ${?ORACLE_HOST}
+    url = &quot;jdbc:oracle:thin:@//&quot;${slick.db.host}&quot;:1521/xe&quot;
+    user = &quot;system&quot;
+    user = ${?ORACLE_USER}
+    password = &quot;oracle&quot;
+    password = ${?ORACLE_PASSWORD}
+    driver = &quot;oracle.jdbc.OracleDriver&quot;
+    connectionTestQuery = &quot;SELECT 1 FROM DUAL&quot;
+  }
+}</code></pre></dd>
+  <dt>H2</dt>
+  <dd>
+  <pre class="prettyprint"><code class="language-conf"># Copyright 2016 Dennis Vriend
+#
+# Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+include &quot;general.conf&quot;
+
+jdbc-journal {
+  slick = ${slick}
+  slick.db.numThreads = 4
+  slick.db.maxConnections = 2
+  slick.db.minConnections = 1
+}
+
+# the akka-persistence-snapshot-store in use
+jdbc-snapshot-store {
+  slick = ${slick}
+  slick.db.numThreads = 4
+  slick.db.maxConnections = 2
+  slick.db.minConnections = 1
+}
+
+# the akka-persistence-query provider in use
+jdbc-read-journal {
+  refresh-interval = &quot;100ms&quot;
+
+  max-buffer-size = &quot;500&quot;
+
+  slick = ${slick}
+  slick.db.numThreads = 1
+  slick.db.maxConnections = 1
+  slick.db.minConnections = 1
+}
+
+slick {
+  driver = &quot;slick.driver.H2Driver$&quot;
+  db {
+    url = &quot;jdbc:h2:mem:test-database;DATABASE_TO_UPPER=false;&quot;
+    user = &quot;root&quot;
+    password = &quot;root&quot;
+    driver = &quot;org.h2.Driver&quot;
+    connectionTestQuery = &quot;SELECT 1&quot;
+  }
+}</code></pre></dd>
+</dl>
 <h2><a href="#datasource-lookup-by-jndi-name" name="datasource-lookup-by-jndi-name" class="anchor"><span class="anchor-link"></span></a>DataSource lookup by JNDI name</h2>
 <p>The plugin uses <code>slick</code> as the database access library. Slick <a href="http://slick.typesafe.com/doc/3.1.1/database.html#using-a-jndi-name">supports jndi</a> for looking up <a href="http://docs.oracle.com/javase/8/docs/api/javax/sql/DataSource.html">DataSource</a>s.</p>
-<p>To enable the JNDI lookup, you must add the following to your <code>application.conf</code>:</p>
-<pre class="prettyprint"><code class="language-bash">jdbc-journal {
+<p>To enable the JNDI lookup, you must add the following to your application.conf:</p>
+<pre class="prettyprint"><code>jdbc-journal {
   slick {
     driver = &quot;slick.driver.PostgresDriver$&quot;
     jndiName = &quot;java:jboss/datasources/PostgresDS&quot;   
   }
 }
 </code></pre>
-<h2><a href="#postgres-configuration" name="postgres-configuration" class="anchor"><span class="anchor-link"></span></a>Postgres configuration</h2>
-<p>Base your akka-persistence-jdbc <code>application.conf</code> on <a href="https://github.com/dnvriend/akka-persistence-jdbc/blob/master/src/test/resources/postgres-application.conf">this config file</a></p>
-<h2><a href="#postgres-schema" name="postgres-schema" class="anchor"><span class="anchor-link"></span></a>Postgres schema</h2>
-<p>The schema is available <a href="https://github.com/dnvriend/akka-persistence-jdbc/blob/master/src/main/resources/schema/postgres/postgres-schema.sql">here</a></p>
-<h2><a href="#mysql-configuration" name="mysql-configuration" class="anchor"><span class="anchor-link"></span></a>MySQL configuration</h2>
-<p>Base your akka-persistence-jdbc <code>application.conf</code> on <a href="https://github.com/dnvriend/akka-persistence-jdbc/blob/master/src/test/resources/mysql-application.conf">this config file</a> </p>
-<h2><a href="#mysql-schema" name="mysql-schema" class="anchor"><span class="anchor-link"></span></a>MySQL schema</h2>
-<p>The schema is available <a href="https://github.com/dnvriend/akka-persistence-jdbc/blob/master/src/main/resources/schema/mysql/mysql-schema.sql">here</a></p>
-<h2><a href="#h2-configuration" name="h2-configuration" class="anchor"><span class="anchor-link"></span></a>H2 configuration</h2>
-<p>Base your akka-persistence-jdbc <code>application.conf</code> on <a href="https://github.com/dnvriend/akka-persistence-jdbc/blob/master/src/test/resources/h2-application.conf">this config file</a></p>
-<h2><a href="#h2-schema" name="h2-schema" class="anchor"><span class="anchor-link"></span></a>H2 schema</h2>
-<p>The schema is available <a href="https://github.com/dnvriend/akka-persistence-jdbc/blob/master/src/main/resources/schema/h2/h2-schema.sql">here</a></p>
-<h2><a href="#oracle-configuration" name="oracle-configuration" class="anchor"><span class="anchor-link"></span></a>Oracle configuration</h2>
-<p>Base your akka-persistence-jdbc <code>application.conf</code> on <a href="https://github.com/dnvriend/akka-persistence-jdbc/blob/master/src/test/resources/oracle-application.conf">this config file</a></p>
-<h2><a href="#oracle-schema" name="oracle-schema" class="anchor"><span class="anchor-link"></span></a>Oracle schema</h2>
-<p>The schema is available <a href="https://github.com/dnvriend/akka-persistence-jdbc/blob/master/src/main/resources/schema/oracle/oracle-schema.sql">here</a></p>
 <h2><a href="#how-to-get-the-readjournal-using-scala" name="how-to-get-the-readjournal-using-scala" class="anchor"><span class="anchor-link"></span></a>How to get the ReadJournal using Scala</h2>
 <p>The <code>ReadJournal</code> is retrieved via the <code>akka.persistence.query.PersistenceQuery</code> extension:</p>
 <pre class="prettyprint"><code class="language-scala">import akka.persistence.query.PersistenceQuery
@@ -297,29 +878,8 @@ class MyCustomSnapshotDao(db: JdbcBackend#Database, val profile: JdbcProfile, sn
 <p>The plugin automatically shuts down the HikariCP connection pool only when the ActorSystem is explicitly terminated. It is advisable to register a shutdown hook to be run when the VM exits that terminates the ActorSystem:</p>
 <pre class="prettyprint"><code class="language-scala">sys.addShutdownHook(system.terminate())
 </code></pre>
-<h1><a href="#some-videos-about-akka-persistence-streams-and-event-sourcing" name="some-videos-about-akka-persistence-streams-and-event-sourcing" class="anchor"><span class="anchor-link"></span></a>Some videos about Akka Persistence, streams and Event Sourcing</h1>
-<p>Is Event Sourcing getting traction? I would say so:</p>
-<ul>
-  <li><a href="https://www.youtube.com/watch?v=x62K4ObBtw4">Konrad Malawski - Akka Streams &amp; Reactive Streams in action (2016)</a></li>
-  <li><a href="https://www.youtube.com/watch?v=qqNsGomfabc">Björn Antonsson &amp; Konrad Malawski - Resilient Applications with Akka Persistence (2016)</a></li>
-  <li><a href="https://www.youtube.com/watch?v=Oc9lHVVn1YQ">Aleksei Irbe - Akka persistence (2016)</a></li>
-  <li><a href="https://www.youtube.com/watch?v=kZL41SMXWdM">Greg Young - Event Sourcing is actually just functional code (2016)</a></li>
-  <li><a href="https://www.youtube.com/watch?v=LDW0QWie21s">Greg Young — A Decade of DDD, CQRS, Event Sourcing (2016)</a></li>
-  <li><a href="https://www.youtube.com/watch?v=QwsA8hkNGOA">Packt - Introduction to Akka Persistence (2016)</a></li>
-  <li><a href="https://www.youtube.com/watch?v=1rFY2SfdDoE">Paweł Szulc - Event Sourcing &amp; Functional Programming - a pair made in heaven (2016)</a></li>
-  <li><a href="https://www.youtube.com/watch?v=Mg5ZmoMddJI">Konrad Malawski - Akka and the Zen of Reactive System Design (2016)</a></li>
-  <li><a href="https://www.youtube.com/watch?v=fQkKu4tTgCE">Renato Cavalcanti - Field guide to DDD/CQRS using the Scala Type System and Akka (2015)</a></li>
-  <li><a href="https://www.youtube.com/watch?v=K4FY0XKediU">Martin Zapletal: Data in Motion - Streaming Static Data Efficiently in Akka Persistence (2016)</a></li>
-  <li><a href="https://www.youtube.com/watch?v=vFVry457XLk">Martin Krasser - Event Sourcing and CQRS with Akka Persistence and Eventuate (2015)</a></li>
-  <li><a href="https://www.youtube.com/watch?v=uA2AsZW0I7A">Duncan DeVore - CQRS/ES with Scala and Akka Persistence (2015)</a></li>
-  <li><a href="https://www.youtube.com/watch?v=gvsRl6xZiiE">Sander Mak - Event-Sourced Architectures with Akka (2015)</a></li>
-  <li><a href="https://www.youtube.com/watch?v=yAI71_smS34">Sidharth Khattri - Akka Persistence | Event Sourcing (2015)</a></li>
-  <li><a href="https://www.youtube.com/watch?v=iKTFalVfoSU">Michał Płachta - Building multiplayer game using Reactive Streams</a></li>
-  <li><a href="https://www.youtube.com/watch?v=r5lecCBazvE">Patrik Nordwall - Intro to Akka persistence (2014)</a></li>
-  <li><a href="https://www.youtube.com/watch?v=8JKjvY4etTY">Greg Young - Event Sourcing(2014)</a></li>
-</ul>
-<h2><a href="#whats-new-" name="whats-new-" class="anchor"><span class="anchor-link"></span></a>What&rsquo;s new?</h2>
-<h2><a href="#2-6-8-2016-11-03-" name="2-6-8-2016-11-03-" class="anchor"><span class="anchor-link"></span></a>2.6.8 (2016-11-03)</h2>
+<h2><a href="#changelog" name="changelog" class="anchor"><span class="anchor-link"></span></a>Changelog</h2>
+<h3><a href="#2-6-8-2016-11-03-" name="2-6-8-2016-11-03-" class="anchor"><span class="anchor-link"></span></a>2.6.8 (2016-11-03)</h3>
 <ul>
   <li>Akka 2.4.10 -&gt; 2.4.12</li>
   <li>Fixed &lsquo;Snapshot storage BLOB handling&rsquo; by <a href="https://github.com/skisel">Sergey Kisel</a>, thanks!</li>
@@ -329,66 +889,71 @@ class MyCustomSnapshotDao(db: JdbcBackend#Database, val profile: JdbcProfile, sn
   <li>The akka-persistence-jdbc plugin only supports the <code>akka.persistence.query.NoOffset</code> and the <code>akka.persistence.query.Sequence</code> offset types.</li>
   <li>There is no support for the <code>akka.persistence.query.TimeBasedUUID</code> offset type. When used, akka-persistence-jdbc will throw an IllegalArgumentException if offered to the read-journal.</li>
 </ul>
-<h2><a href="#2-6-7-2016-09-07-" name="2-6-7-2016-09-07-" class="anchor"><span class="anchor-link"></span></a>2.6.7 (2016-09-07)</h2>
+<h3><a href="#2-6-7-2016-09-07-" name="2-6-7-2016-09-07-" class="anchor"><span class="anchor-link"></span></a>2.6.7 (2016-09-07)</h3>
 <ul>
   <li>Merged PR #75 <a href="https://github.com/jroper">jroper</a> - Removed binary dependency on slick-extensions, thanks!</li>
   <li>Please note, slick-extensions 3.1.0 are open source, but the license didn&rsquo;t change, so you cannot use it for free, you still need a <a href="https://www.lightbend.com/platform/subscription">Lightbend Subscription</a>.</li>
   <li>Akka 2.4.9 -&gt; 2.4.10</li>
 </ul>
-<h2><a href="#2-6-6-2016-08-22-" name="2-6-6-2016-08-22-" class="anchor"><span class="anchor-link"></span></a>2.6.6 (2016-08-22)</h2>
+<h3><a href="#2-6-6-2016-08-22-" name="2-6-6-2016-08-22-" class="anchor"><span class="anchor-link"></span></a>2.6.6 (2016-08-22)</h3>
 <ul>
   <li>Merged PR #66 <a href="https://github.com/monktastic">monktastic</a>, eventsByPersistenceId should terminate when toSequenceNr is reached, thanks!</li>
 </ul>
-<h2><a href="#2-6-5-2016-08-20-" name="2-6-5-2016-08-20-" class="anchor"><span class="anchor-link"></span></a>2.6.5 (2016-08-20)</h2>
+<h3><a href="#2-6-5-2016-08-20-" name="2-6-5-2016-08-20-" class="anchor"><span class="anchor-link"></span></a>2.6.5 (2016-08-20)</h3>
 <ul>
   <li>Akka 2.4.9-RC2 -&gt; 2.4.9</li>
 </ul>
-<h2><a href="#2-6-5-rc2-2016-08-06-" name="2-6-5-rc2-2016-08-06-" class="anchor"><span class="anchor-link"></span></a>2.6.5-RC2 (2016-08-06)</h2>
+<h3><a href="#2-6-5-rc2-2016-08-06-" name="2-6-5-rc2-2016-08-06-" class="anchor"><span class="anchor-link"></span></a>2.6.5-RC2 (2016-08-06)</h3>
 <ul>
   <li>Akka 2.4.9-RC1 -&gt; 2.4.9-RC2</li>
 </ul>
-<h2><a href="#2-6-5-rc1-2016-08-03-" name="2-6-5-rc1-2016-08-03-" class="anchor"><span class="anchor-link"></span></a>2.6.5-RC1 (2016-08-03)</h2>
+<h3><a href="#2-6-5-rc1-2016-08-03-" name="2-6-5-rc1-2016-08-03-" class="anchor"><span class="anchor-link"></span></a>2.6.5-RC1 (2016-08-03)</h3>
 <ul>
   <li>Akka 2.4.8 -&gt; 2.4.9-RC1</li>
 </ul>
-<h2><a href="#2-6-4-2016-07-30-" name="2-6-4-2016-07-30-" class="anchor"><span class="anchor-link"></span></a>2.6.4 (2016-07-30)</h2>
+<h3><a href="#2-6-4-2016-07-30-" name="2-6-4-2016-07-30-" class="anchor"><span class="anchor-link"></span></a>2.6.4 (2016-07-30)</h3>
 <ul>
   <li>Merged PR #62 <a href="https://github.com/jtysper">jtysper</a>, Fix Oracle support, thanks!</li>
 </ul>
-<h2><a href="#2-6-3-2016-07-27-" name="2-6-3-2016-07-27-" class="anchor"><span class="anchor-link"></span></a>2.6.3 (2016-07-27)</h2>
+<h3><a href="#2-6-3-2016-07-27-" name="2-6-3-2016-07-27-" class="anchor"><span class="anchor-link"></span></a>2.6.3 (2016-07-27)</h3>
 <ul>
   <li>Merged PR #61 <a href="https://github.com/rockjam">Nikolay Tatarinov</a>, Sql optimizations, thanks!</li>
 </ul>
-<h2><a href="#2-6-2-2016-07-26-" name="2-6-2-2016-07-26-" class="anchor"><span class="anchor-link"></span></a>2.6.2 (2016-07-26)</h2>
+<h3><a href="#2-6-2-2016-07-26-" name="2-6-2-2016-07-26-" class="anchor"><span class="anchor-link"></span></a>2.6.2 (2016-07-26)</h3>
 <ul>
   <li>Fix for issue #60 where an immutable.Vector was trying to be matched by the serializer in TrySeq stage.</li>
 </ul>
-<h2><a href="#2-6-1-2016-07-23-" name="2-6-1-2016-07-23-" class="anchor"><span class="anchor-link"></span></a>2.6.1 (2016-07-23)</h2>
+<h3><a href="#2-6-1-2016-07-23-" name="2-6-1-2016-07-23-" class="anchor"><span class="anchor-link"></span></a>2.6.1 (2016-07-23)</h3>
 <ul>
-  <li>
-  <p>Support for the <strong>non-official</strong> bulk loading interface <a href="https://github.com/dnvriend/akka-persistence-query-writer/blob/master/src/main/scala/akka/persistence/query/scaladsl/EventWriter.scala">akka.persistence.query.scaladsl.EventWriter</a> added. I need this interface to load massive amounts of data, that will be processed by many actors, but initially I just want to create and store one or more events belonging to an actor, that will handle the business rules eventually. Using actors or a shard region for that matter, just gives to much actor life cycle overhead ie. too many calls to the data store. The <code>akka.persistence.query.scaladsl.EventWriter</code> interface is non-official and puts all responsibility of ensuring the integrity of the journal on you. This means when some strange things are happening caused by wrong loading of the data, and therefore breaking the integrity and ruleset of akka-persistence, all the responsibility on fixing it is on you, and not on the Akka team.</p></li>
-  <li>
-  <p>2.6.0 (2016-07-17)</p></li>
+  <li>Support for the <strong>non-official</strong> bulk loading interface <a href="https://github.com/dnvriend/akka-persistence-query-writer/blob/master/src/main/scala/akka/persistence/query/scaladsl/EventWriter.scala">akka.persistence.query.scaladsl.EventWriter</a> added. I need this interface to load massive amounts of data, that will be processed by many actors, but initially I just want to create and store one or more events belonging to an actor, that will handle the business rules eventually. Using actors or a shard region for that matter, just gives to much actor life cycle overhead ie. too many calls to the data store. The <code>akka.persistence.query.scaladsl.EventWriter</code> interface is non-official and puts all responsibility of ensuring the integrity of the journal on you. This means when some strange things are happening caused by wrong loading of the data, and therefore breaking the integrity and ruleset of akka-persistence, all the responsibility on fixing it is on you, and not on the Akka team.</li>
+</ul>
+<h3><a href="#2-6-0-2016-07-17-" name="2-6-0-2016-07-17-" class="anchor"><span class="anchor-link"></span></a>2.6.0 (2016-07-17)</h3>
+<ul>
   <li>Removed the <code>deleted_to</code> and <code>created</code> columns of the <code>journal</code> table to become compatible with  <code>akka-persistence-query</code> spec that states that all messages should be replayed, even deleted ones</li>
   <li>New schema&rsquo;s are available for <a href="https://github.com/dnvriend/akka-persistence-jdbc/blob/master/src/main/resources/schema/postgres/postgres-schema.sql">postgres</a>, <a href="https://github.com/dnvriend/akka-persistence-jdbc/blob/master/src/main/resources/schema/mysql/mysql-schema.sql">mysql</a> and <a href="https://github.com/dnvriend/akka-persistence-jdbc/blob/master/src/main/resources/schema/h2/h2-schema.sql">h2</a></li>
   <li>No need for Query Publishers with the new akka-streams API</li>
   <li>Codacy code cleanup</li>
   <li>There is still no support for Oracle since the addition of the ordering SERIAL column which Oracle does not support. Help to add Oracle support is appreciated.</li>
-  <li>
-  <p>2.5.2 (2016-07-03)</p></li>
+</ul>
+<h3><a href="#2-5-2-2016-07-03-" name="2-5-2-2016-07-03-" class="anchor"><span class="anchor-link"></span></a>2.5.2 (2016-07-03)</h3>
+<ul>
   <li>The <code>eventsByTag</code> query should now be fixed.</li>
-  <li>
-  <p>2.5.1 (2016-07-03)</p></li>
+</ul>
+<h3><a href="#2-5-1-2016-07-03-" name="2-5-1-2016-07-03-" class="anchor"><span class="anchor-link"></span></a>2.5.1 (2016-07-03)</h3>
+<ul>
   <li>There is no 2.5.1; error while releasing</li>
-  <li>
-  <p>2.5.0 (2016-06-29)</p></li>
+</ul>
+<h3><a href="#2-5-0-2016-06-29-" name="2-5-0-2016-06-29-" class="anchor"><span class="anchor-link"></span></a>2.5.0 (2016-06-29)</h3>
+<ul>
   <li>Changed the database schema to include two new columns, an <code>ordering</code> and a <code>deleted</code> column. Both fields are needed to support the akka-persistence-query API. The <code>ordering</code> column is needed to register the total ordering of events an is used for the offset for both <code>*byTag</code> queries. The deleted column is not yet used.</li>
   <li>Known issue: will not work on Oracle (yet).</li>
-  <li>
-  <p>2.4.1 (2016-06-20)</p></li>
+</ul>
+<h3><a href="#2-4-1-2016-06-20-" name="2-4-1-2016-06-20-" class="anchor"><span class="anchor-link"></span></a>2.4.1 (2016-06-20)</h3>
+<ul>
   <li>Merged PR #57 <a href="https://github.com/fcristovao">Filipe Cristóvão</a>, Added support for the H2 database, thanks!</li>
-  <li>
-  <p>2.4.0 (2016-06-19)</p></li>
+</ul>
+<h3><a href="#2-4-0-2016-06-19-" name="2-4-0-2016-06-19-" class="anchor"><span class="anchor-link"></span></a>2.4.0 (2016-06-19)</h3>
+<ul>
   <li>Merged PR #55 <a href="https://github.com/fcristovao">Filipe Cristóvão</a>, Redesign of the serializer/deserializer to make it possible to override it to implement your own serialization strategy, thanks!</li>
   <li>This is potentially a breaking change for users that implement there own DAO or extend and override some of the features of the default one:
     <ol>
@@ -398,11 +963,13 @@ class MyCustomSnapshotDao(db: JdbcBackend#Database, val profile: JdbcProfile, sn
   </li>
   <li>Removed the <code>jdbc-journal.serialization</code>, <code>jdbc-snapshot-store.serialization</code> and <code>jdbc-read-journal.serialization</code> setting as the DAOs have to implement their own serialization strategy.</li>
   <li>The following interfaces <code>akka.persistence.jdbc.dao.JournalDao</code>, <code>akka.persistence.jdbc.dao.ReadJournalDao</code> and <code>akka.persistence.jdbc.dao.SnapshotDao</code> have been changed as the DAOs have to implement their own strategy, they&rsquo;ll have to work with <code>AtomicWrite</code>, <code>PersistentRepr</code> and <code>Any</code> as types.</li>
-  <li>
-  <p>2.3.3 (2016-06-13)</p></li>
+</ul>
+<h3><a href="#2-3-3-2016-06-13-" name="2-3-3-2016-06-13-" class="anchor"><span class="anchor-link"></span></a>2.3.3 (2016-06-13)</h3>
+<ul>
   <li>Fix for the async query <code>eventsByTag</code> that failed when using an Oracle database.</li>
-  <li>
-  <p>2.3.2 (2016-06-12)</p></li>
+</ul>
+<h3><a href="#2-3-2-2016-06-12-" name="2-3-2-2016-06-12-" class="anchor"><span class="anchor-link"></span></a>2.3.2 (2016-06-12)</h3>
+<ul>
   <li>This release has a configuration how the the slick database driver gets resolved. The following driver names must be used:
     <ul>
       <li><code>slick.driver.PostgresDriver$</code></li>
@@ -411,11 +978,13 @@ class MyCustomSnapshotDao(db: JdbcBackend#Database, val profile: JdbcProfile, sn
     </ul>
   </li>
   <li>The journal, snapshot and readjournal plugins now all use defaults as stated in the reference.conf, it is not necessary to define properties when using a plugin-id that has not been defined in reference.conf</li>
-  <li>
-  <p>2.3.1 (2016-06-10)</p></li>
+</ul>
+<h3><a href="#2-3-1-2016-06-10-" name="2-3-1-2016-06-10-" class="anchor"><span class="anchor-link"></span></a>2.3.1 (2016-06-10)</h3>
+<ul>
   <li>Async queries should take a max number of elements from the result set according to the  <code>jdbc-read-journal.max-buffer-size</code> configuration. This should result in better memory usage and better IO performance.</li>
-  <li>
-  <p>2.3.0 (2016-06-10)</p></li>
+</ul>
+<h3><a href="#2-3-0-2016-06-10-" name="2-3-0-2016-06-10-" class="anchor"><span class="anchor-link"></span></a>2.3.0 (2016-06-10)</h3>
+<ul>
   <li>This is a feature, configuration and (maybe) API breaking release when you rely on the DAO&rsquo;s, my apologies.</li>
   <li>Killed some [feature-creep], this will result in a better design of the plugin.
     <ul>
@@ -426,51 +995,65 @@ class MyCustomSnapshotDao(db: JdbcBackend#Database, val profile: JdbcProfile, sn
   </li>
   <li>Implemented async queries, fixes issue #53 All async queries do not work as expected</li>
   <li>Implemented akka persistence plugin scoping strategy, fixes issue #42 Make it possible to have multiple instances of the plugin (configured differently)</li>
-  <li>
-  <p>2.2.25 (2016-06-08)</p></li>
+</ul>
+<h3><a href="#2-2-25-2016-06-08-" name="2-2-25-2016-06-08-" class="anchor"><span class="anchor-link"></span></a>2.2.25 (2016-06-08)</h3>
+<ul>
   <li>Merged PR #54 <a href="https://github.com/charithe">Charith Ellawala</a> Honour the schemaName setting for the snapshot table, thanks!</li>
   <li>Compiling for Java 8 as Akka 2.4.x dropped support for Java 6 and 7 and only works on Java 8 and above</li>
-  <li>
-  <p>2.2.24 (2016-06-05)</p></li>
+</ul>
+<h3><a href="#2-2-24-2016-06-05-" name="2-2-24-2016-06-05-" class="anchor"><span class="anchor-link"></span></a>2.2.24 (2016-06-05)</h3>
+<ul>
   <li>Akka 2.4.6 -&gt; 2.4.7</li>
-  <li>
-  <p>2.2.23 (2016-05-25)</p></li>
+</ul>
+<h3><a href="#2-2-23-2016-05-25-" name="2-2-23-2016-05-25-" class="anchor"><span class="anchor-link"></span></a>2.2.23 (2016-05-25)</h3>
+<ul>
   <li>Akka 2.4.5 -&gt; 2.4.6</li>
-  <li>
-  <p>2.2.22 (2016-05-18)</p></li>
+</ul>
+<h3><a href="#2-2-22-2016-05-18-" name="2-2-22-2016-05-18-" class="anchor"><span class="anchor-link"></span></a>2.2.22 (2016-05-18)</h3>
+<ul>
   <li>Merged PR #52 <a href="https://github.com/gopalsaob">Gopal Shah</a> for issue <a href="https://github.com/dnvriend/akka-persistence-jdbc/issues/51">#44 - Unable to differentiate between persistence failures and serialization issues</a>, thanks!</li>
   <li>Akka 2.4.4 -&gt; 2.4.5</li>
-  <li>
-  <p>2.2.21 (2016-04-30)</p></li>
+</ul>
+<h3><a href="#2-2-21-2016-04-30-" name="2-2-21-2016-04-30-" class="anchor"><span class="anchor-link"></span></a>2.2.21 (2016-04-30)</h3>
+<ul>
   <li>Disabled the default dependency on HikariCP-Java6 v2.3.7,</li>
   <li>Added dependency on HikariCP v2.4.6 for better performance and bug fixes</li>
-  <li>
-  <p>2.2.20 (2016-04-29)</p></li>
+</ul>
+<h3><a href="#2-2-20-2016-04-29-" name="2-2-20-2016-04-29-" class="anchor"><span class="anchor-link"></span></a>2.2.20 (2016-04-29)</h3>
+<ul>
   <li>Merged PR #50 <a href="https://github.com/prettynatty">Andrey Kouznetsov</a> for issue <a href="https://github.com/dnvriend/akka-persistence-jdbc/issues/44">#44 - Leaking connections</a>, thanks!</li>
-  <li>
-  <p>2.2.19 (2016-04-26)</p></li>
+</ul>
+<h3><a href="#2-2-19-2016-04-26-" name="2-2-19-2016-04-26-" class="anchor"><span class="anchor-link"></span></a>2.2.19 (2016-04-26)</h3>
+<ul>
   <li>Merged PR #46 <a href="https://github.com/prettynatty">Andrey Kouznetsov</a> Significant performance boost by using compiled queries, thanks!</li>
   <li>Merged PR #47 <a href="https://github.com/prettynatty">Andrey Kouznetsov</a> Ability to get Database instance from JNDI, thanks!</li>
   <li><strong><em>Disable the async queries as they are implemented very sketchy, please use the synchronous query API with client side polling.</em></strong></li>
-  <li>
-  <p>2.2.18 (2016-04-19)</p></li>
+</ul>
+<h3><a href="#2-2-18-2016-04-19-" name="2-2-18-2016-04-19-" class="anchor"><span class="anchor-link"></span></a>2.2.18 (2016-04-19)</h3>
+<ul>
   <li>Text based serialization formats</li>
-  <li>
-  <p>2.2.17 (2016-04-14)</p></li>
+</ul>
+<h3><a href="#2-2-17-2016-04-14-" name="2-2-17-2016-04-14-" class="anchor"><span class="anchor-link"></span></a>2.2.17 (2016-04-14)</h3>
+<ul>
   <li>Fix for <a href="https://github.com/dnvriend/akka-persistence-jdbc/issues/41">Issue #41 - Provide a way to shut-down connections explicitly</a>, the database connections will be automatically shut down when the ActorSystem shuts down when calling <code>system.terminate()</code> in which <code>system</code> is the ActorSystem instance.</li>
   <li>Akka 2.4.3 -&gt; 2.4.4</li>
-  <li>
-  <p>2.2.16 (2016-04-01)</p></li>
+</ul>
+<h3><a href="#2-2-16-2016-04-01-" name="2-2-16-2016-04-01-" class="anchor"><span class="anchor-link"></span></a>2.2.16 (2016-04-01)</h3>
+<ul>
   <li>Akka 2.4.2 -&gt; 2.4.3</li>
-  <li>
-  <p>2.2.15 (2016-03-18)</p></li>
+</ul>
+<h3><a href="#2-2-15-2016-03-18-" name="2-2-15-2016-03-18-" class="anchor"><span class="anchor-link"></span></a>2.2.15 (2016-03-18)</h3>
+<ul>
   <li>Merged PR #37 <a href="https://github.com/wwwiiilll">William Turner</a> Make offset sequential on eventsByTag queries, thanks!</li>
-  <li>
-  <p>2.2.14 (2016-03-17)</p></li>
+</ul>
+<h3><a href="#2-2-14-2016-03-17-" name="2-2-14-2016-03-17-" class="anchor"><span class="anchor-link"></span></a>2.2.14 (2016-03-17)</h3>
+<ul>
   <li>Determine events where appropriate by using an offset using the query api was not tested and thus the implementation was incorrect. This has been corrected and the documentation altered where appropriate.</li>
+</ul>
+<h3><a href="#2-2-13-2016-03-17-" name="2-2-13-2016-03-17-" class="anchor"><span class="anchor-link"></span></a>2.2.13 (2016-03-17)</h3>
+<ul>
   <li>
-  <p>2.2.13 (2016-03-17)</p></li>
-  <li>Release to enable Bintray to sync with JCenter, so no big changes here</li>
+  <p>Release to enable Bintray to sync with JCenter, so no big changes here</p></li>
   <li>
   <p>2.2.12 (2016-03-17)</p></li>
   <li>Added the appropriate Maven POM resources to be publishing to Bintray&rsquo;s JCenter</li>
@@ -684,12 +1267,6 @@ class MyCustomSnapshotDao(db: JdbcBackend#Database, val profile: JdbcProfile, sn
   <p>0.0.1 (2014-05-23)</p></li>
   <li>Initial commit</li>
 </ul>
-<h2><a href="#code-of-conduct" name="code-of-conduct" class="anchor"><span class="anchor-link"></span></a>Code of Conduct</h2>
-<p>Contributors all agree to follow the <a href="http://www.w3.org/Consortium/cepc/">W3C Code of Ethics and Professional Conduct</a>.</p>
-<p>If you want to take action, feel free to contact Dennis Vriend <a href="mailto:&#x64;&#110;&#118;r&#x69;e&#110;&#100;@&#x67;&#x6d;&#x61;&#105;&#108;.&#99;&#111;&#x6d;">&#x64;&#110;&#118;r&#x69;e&#110;&#100;@&#x67;&#x6d;&#x61;&#105;&#108;.&#99;&#111;&#x6d;</a>. You can also contact W3C Staff as explained in <a href="http://www.w3.org/Consortium/pwe/#Procedures">W3C Procedures</a>.</p>
-<h2><a href="#license" name="license" class="anchor"><span class="anchor-link"></span></a>License</h2>
-<p>This source code is made available under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 License</a>. The [quick summary of what this license means is available here](<a href="https://tldrlegal.com/license/apache-license-2.0-(apache-2.0)">https://tldrlegal.com/license/apache-license-2.0-(apache-2.0)</a>)</p>
-<p>Have fun!</p>
 <div class="nav-next">
 <p><strong>Next:</strong> <a href="inmemory.html">akka-persistence-inmemory</a></p>
 </div>
@@ -704,17 +1281,12 @@ class MyCustomSnapshotDao(db: JdbcBackend#Database, val profile: JdbcProfile, sn
   <ul>
     <li><a href="jdbc.html#artifacts">Artifacts</a></li>
     <li><a href="jdbc.html#contribution-policy">Contribution policy</a></li>
+    <li><a href="jdbc.html#code-of-conduct">Code of Conduct</a></li>
     <li><a href="jdbc.html#license">License</a></li>
     <li><a href="jdbc.html#configuration">Configuration</a></li>
+    <li><a href="jdbc.html#database-schema">Database Schema</a></li>
+    <li><a href="jdbc.html#configuration">Configuration</a></li>
     <li><a href="jdbc.html#datasource-lookup-by-jndi-name">DataSource lookup by JNDI name</a></li>
-    <li><a href="jdbc.html#postgres-configuration">Postgres configuration</a></li>
-    <li><a href="jdbc.html#postgres-schema">Postgres schema</a></li>
-    <li><a href="jdbc.html#mysql-configuration">MySQL configuration</a></li>
-    <li><a href="jdbc.html#mysql-schema">MySQL schema</a></li>
-    <li><a href="jdbc.html#h2-configuration">H2 configuration</a></li>
-    <li><a href="jdbc.html#h2-schema">H2 schema</a></li>
-    <li><a href="jdbc.html#oracle-configuration">Oracle configuration</a></li>
-    <li><a href="jdbc.html#oracle-schema">Oracle schema</a></li>
     <li><a href="jdbc.html#how-to-get-the-readjournal-using-scala">How to get the ReadJournal using Scala</a></li>
     <li><a href="jdbc.html#how-to-get-the-readjournal-using-java">How to get the ReadJournal using Java</a></li>
     <li><a href="jdbc.html#persistence-query">Persistence Query</a></li>
@@ -724,7 +1296,7 @@ class MyCustomSnapshotDao(db: JdbcBackend#Database, val profile: JdbcProfile, sn
     <li><a href="jdbc.html#tagging-events">Tagging events</a></li>
     <li><a href="jdbc.html#custom-dao-implementation">Custom DAO Implementation</a></li>
     <li><a href="jdbc.html#explicitly-shutting-down-the-database-connections">Explicitly shutting down the database connections</a></li>
-    <li><a href="jdbc.html#some-videos-about-akka-persistence-streams-and-event-sourcing">Some videos about Akka Persistence, streams and Event Sourcing</a></li>
+    <li><a href="jdbc.html#changelog">Changelog</a></li>
   </ul></li>
 </ul>
 </div>

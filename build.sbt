@@ -1,4 +1,4 @@
-lazy val root = project
+lazy val akkaPersistence = project
   .in(file("."))
   .aggregate(inmemory, jdbc, journalWriter)
   .settings(
@@ -7,7 +7,7 @@ lazy val root = project
 
 lazy val inmemory = project
   .in(file("inmemory"))
-  .enablePlugins(AutomateHeaderPlugin)
+  .enablePlugins(AutomateHeaderPlugin, ReleasePlugin)
   .settings(
     version := "1.3.15-SNAPSHOT",
     name := "akka-persistence-inmemory",
@@ -17,9 +17,8 @@ lazy val inmemory = project
 
 lazy val jdbc = project
   .in(file("jdbc"))
-  .enablePlugins(AutomateHeaderPlugin)
+  .enablePlugins(AutomateHeaderPlugin, ReleasePlugin)
   .settings(
-    version := "2.6.9-SNAPSHOT",
     name := "akka-persistence-jdbc",
     crossScalaVersions := Dependencies.ScalaVersions.take(1),
     Dependencies.Jdbc,
@@ -28,9 +27,8 @@ lazy val jdbc = project
 
 lazy val journalWriter = project
   .in(file("journal-writer"))
-  .enablePlugins(AutomateHeaderPlugin)
+  .enablePlugins(AutomateHeaderPlugin, ReleasePlugin)
   .settings(
-    version := "0.0.3-SNAPSHOT",
     name := "akka-persistence-journal-writer",
     Dependencies.JournalWriter
   ).dependsOn(inmemory)
@@ -42,5 +40,16 @@ lazy val docs = project
     version := "",
     name := "akka-persistence",
     paradoxTheme := Some(builtinParadoxTheme("generic")),
+    paradoxProperties ++= Map(
+      "version" -> version.value,
+      "scala.binaryVersion" -> scalaBinaryVersion.value,
+      "snippet.base_dir" -> s"${(baseDirectory in akkaPersistence).value}",
+      "jdbcVersion" -> (version in jdbc).value,
+      "inmemoryVersion" -> (version in inmemory).value,
+      "journalWriterVersion" -> (version in journalWriter).value,
+      "github.base_url" -> "https://github.com/dnvriend/akka-persistence",
+      "extref.akka-docs.base_url" -> s"http://doc.akka.io/docs/akka/latest/%s.html",            
+      "scaladoc.akka.base_url" -> s"http://doc.akka.io/api/akka/latest"
+    ),
     publishArtifact := false
-)
+  )

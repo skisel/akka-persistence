@@ -7,7 +7,7 @@ The Akka Persistence Journal Writer connector consists of an akka-streams Flow a
 sbt
 :   @@@vars
     ```scala
-    libraryDependencies += "com.github.dnvriend" %% "akka-persistence-journal-writer" % "0.0.2"
+    libraryDependencies += "com.github.dnvriend" %% "akka-persistence-journal-writer" % "$journalWriterVersion$"
     ```
     @@@
 
@@ -17,7 +17,7 @@ Maven
     <dependency>
       <groupId>com.github.dnvriend</groupId>
       <artifactId>akka-persistence-journal-writer_2.11</artifactId>
-      <version>0.0.2</version>
+      <version>$journalWriterVersion$</version>
     </dependency>
     ```
     @@@
@@ -26,7 +26,7 @@ Gradle
 :   @@@vars
     ```gradle
     dependencies {
-      compile group: "com.github.dnvriend", name: "akka-persistence-journal-writer_2.11", version: "0.0.2"
+      compile group: "com.github.dnvriend", name: "akka-persistence-journal-writer_2.11", version: "$journalWriterVersion$"
     }
     ```
     @@@
