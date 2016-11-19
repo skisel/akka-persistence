@@ -4,7 +4,7 @@ import sbt.Keys._
 object Dependencies {
     val ScalaVersions = Seq("2.11.8", "2.12.0")
     val ScalaXmlVersion = "1.0.5"
-    val AkkaVersion = "2.4.12"
+    val AkkaVersion = "2.4.13"
     val HttpVersion = "3.0.0-RC1"
     val ScalazVersion = "7.2.7"
     val CassandraVersion = "3.1.2"
@@ -76,4 +76,15 @@ object Dependencies {
         "com.typesafe.akka" %% "akka-http-testkit" % HttpVersion % Test    
       )
     )
+
+  val HttpMarshaller = Seq(
+    libraryDependencies ++= Seq(
+      "com.typesafe.akka" %% "akka-http-core" % HttpVersion,
+      "com.typesafe.akka" %% "akka-http-spray-json" % HttpVersion,
+      "com.typesafe.akka" %% "akka-http-xml" % HttpVersion,
+      "com.hunorkovacs" %% "koauth" % "1.1.0" exclude("com.typesafe.akka", "akka-actor_2.11") exclude("org.specs2", "specs2_2.11"),
+      "org.scalaz" %% "scalaz-core" % ScalazVersion,
+      "com.typesafe.akka" %% "akka-http-testkit" % HttpVersion % Test
+    )
+  )
 }

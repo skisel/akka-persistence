@@ -9,7 +9,6 @@ lazy val inmemory = project
   .in(file("inmemory"))
   .enablePlugins(AutomateHeaderPlugin, ReleasePlugin)
   .settings(
-    version := "1.3.15-SNAPSHOT",
     name := "akka-persistence-inmemory",
     Dependencies.InMemory,
     Publish.InMemory
@@ -57,6 +56,16 @@ lazy val httpClient = project
     crossScalaVersions := Dependencies.ScalaVersions.take(1),
     Dependencies.HttpClient
   )
+
+lazy val httpMarshaller = project
+    .in(file("http-marshaller"))
+    .enablePlugins(AutomateHeaderPlugin, ReleasePlugin)
+    .settings(
+      name := "akka-http-marshaller",
+      crossScalaVersions := Dependencies.ScalaVersions.take(1),
+      Dependencies.HttpMarshaller
+    )
+
 
 lazy val docs = project
   .in(file("paradox"))
