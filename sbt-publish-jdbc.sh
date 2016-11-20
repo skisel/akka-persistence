@@ -14,4 +14,4 @@
 # limitations under the License.
 #
 #!/bin/bash
-sbt "project inmemory" "clean" "+publish"
+sbt "project jdbc" "clean" "publish"
