@@ -37,7 +37,7 @@ wait 3306 MySQL
 wait 5432 Postgres
 wait 1521 Oracle
 sbt "project jdbc" "test"
-sbt "project inmemory" "+test"
-sbt "project journalWriter" "+test"
+#sbt "project inmemory" "+test"
+#sbt "project journalWriter" "+test"
 docker-compose -f jdbc/scripts/docker-compose.yml stop
 docker-compose -f jdbc/scripts/docker-compose.yml rm -f

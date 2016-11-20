@@ -23,7 +23,7 @@ object Dependencies {
        "com.typesafe.akka" %% "akka-persistence-tck" % AkkaVersion % Test,
        "com.typesafe.akka" %% "akka-stream-testkit" % AkkaVersion % Test,
        "com.typesafe.akka" %% "akka-testkit" % AkkaVersion % Test,
-       "org.scalatest" %% "scalatest" % "3.0.0" % Test 
+       "org.scalatest" %% "scalatest" % "3.0.1" % Test
       )
     )
 

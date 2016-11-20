@@ -312,7 +312,7 @@ from the tagged event stream.
 
 ## Changelog
 ### 1.3.15 (2016-11-19)
-  - Akka 2.4.13 -> 2.4.13
+  - Akka 2.4.12 -> 2.4.13
 
 ### 1.3.14 (2016-11-03)
   - cross scala 2.11.8 and 2.12.0 build
