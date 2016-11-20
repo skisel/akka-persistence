@@ -18,7 +18,14 @@ object Publish {
 		pomExtraSetting("akka-persistence-jdbc"),
 		homepageSetting("akka-persistence-jdbc"),
 		bintrayPackageLabelsSettings("jdbc"),
-		bintrayPackageAttributesSettings("jdbc")		
+		bintrayPackageAttributesSettings("akka-persistence-jdbc")
+	)
+
+	val JournalWriter = Publish.Common ++ Seq(
+		pomExtraSetting("akka-persistence-journal-writer"),
+		homepageSetting("akka-persistence-journal-writer"),
+		bintrayPackageLabelsSettings("journal", "writer"),
+		bintrayPackageAttributesSettings("akka-persistence-journal-writer")
 	)
 
 	def pomExtraSetting(name: String) = pomExtra := 

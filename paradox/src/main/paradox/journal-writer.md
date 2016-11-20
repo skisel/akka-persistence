@@ -141,6 +141,8 @@ Java
     ```
 
 ## Changelog
+### 0.0.3 (2016-11-20)
+  - Akka 2.4.12 -> 2.4.13
 
 ### 0.0.2 (2016-11-03)
   - cross scala 2.11.8 and 2.12.0 build against akka 2.4.12

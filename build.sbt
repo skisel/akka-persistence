@@ -29,8 +29,9 @@ lazy val journalWriter = project
   .enablePlugins(AutomateHeaderPlugin, ReleasePlugin)
   .settings(
     name := "akka-persistence-journal-writer",
-    Dependencies.JournalWriter
-  ).dependsOn(inmemory % "test -> compile")
+    Dependencies.JournalWriter,
+    Publish.JournalWriter
+).dependsOn(inmemory % "test -> compile")
 
 lazy val streamsExtension = project
   .in(file("stream-extensions"))
