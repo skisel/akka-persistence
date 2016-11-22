@@ -103,20 +103,20 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <dl>
   <dt>sbt</dt>
   <dd>
-  <pre class="prettyprint"><code class="language-scala">libraryDependencies += &quot;com.github.dnvriend&quot; %% &quot;akka-persistence-jdbc&quot; % &quot;2.6.9&quot;
+  <pre class="prettyprint"><code class="language-scala">libraryDependencies += &quot;com.github.dnvriend&quot; %% &quot;akka-persistence-jdbc&quot; % &quot;2.6.10&quot;
 </code></pre></dd>
   <dt>Maven</dt>
   <dd>
   <pre class="prettyprint"><code class="language-xml">&lt;dependency&gt;
   &lt;groupId&gt;com.github.dnvriend&lt;/groupId&gt;
   &lt;artifactId&gt;akka-persistence-jdbc_2.11&lt;/artifactId&gt;
-  &lt;version&gt;2.6.9&lt;/version&gt;
+  &lt;version&gt;2.6.10&lt;/version&gt;
 &lt;/dependency&gt;
 </code></pre></dd>
   <dt>Gradle</dt>
   <dd>
   <pre class="prettyprint"><code class="language-gradle">dependencies {
-  compile group: &quot;com.github.dnvriend&quot;, name: &quot;akka-persistence-jdbc_2.11&quot;, version: &quot;2.6.9&quot;
+  compile group: &quot;com.github.dnvriend&quot;, name: &quot;akka-persistence-jdbc_2.11&quot;, version: &quot;2.6.10&quot;
 }
 </code></pre></dd>
 </dl>
@@ -879,6 +879,10 @@ class MyCustomSnapshotDao(db: JdbcBackend#Database, val profile: JdbcProfile, sn
 <pre class="prettyprint"><code class="language-scala">sys.addShutdownHook(system.terminate())
 </code></pre>
 <h2><a href="#changelog" name="changelog" class="anchor"><span class="anchor-link"></span></a>Changelog</h2>
+<h3><a href="#2-6-10-2016-11-22-" name="2-6-10-2016-11-22-" class="anchor"><span class="anchor-link"></span></a>2.6.10 (2016-11-22)</h3>
+<ul>
+  <li>Akka 2.4.13 -&gt; 2.4.14</li>
+</ul>
 <h3><a href="#2-6-9-2016-11-20-" name="2-6-9-2016-11-20-" class="anchor"><span class="anchor-link"></span></a>2.6.9 (2016-11-20)</h3>
 <ul>
   <li>Akka 2.4.12 -&gt; 2.4.13</li>

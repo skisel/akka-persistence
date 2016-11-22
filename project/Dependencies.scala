@@ -3,8 +3,8 @@ import sbt.Keys._
 
 object Dependencies {
     val ScalaVersions = Seq("2.11.8", "2.12.0")
+    val AkkaVersion = "2.4.14"
     val ScalaXmlVersion = "1.0.5"
-    val AkkaVersion = "2.4.13"
     val HttpVersion = "3.0.0-RC1"
     val ScalazVersion = "7.2.7"
     val CassandraVersion = "3.1.2"

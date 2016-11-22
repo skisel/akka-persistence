@@ -311,6 +311,9 @@ The same stream elements (in same order) are returned for multiple executions of
 from the tagged event stream. 
 
 ## Changelog
+### 1.3.16 (2016-11-22)
+  - Akka 2.4.13 -> 2.4.14
+
 ### 1.3.15 (2016-11-19)
   - Akka 2.4.12 -> 2.4.13
 

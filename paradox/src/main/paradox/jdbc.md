@@ -322,6 +322,9 @@ sys.addShutdownHook(system.terminate())
 ```
 
 ## Changelog
+### 2.6.10 (2016-11-22)
+  - Akka 2.4.13 -> 2.4.14
+
 ### 2.6.9 (2016-11-20)
   - Akka 2.4.12 -> 2.4.13
 
