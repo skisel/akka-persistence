@@ -132,9 +132,9 @@ abstract class QueryTestSpec(config: String = "application.conf") extends TestSp
 
     journal ! WriteMessages(msgs, probe.ref, 1)
 
-    probe.expectMsg(WriteMessagesSuccessful)
+    probe.expectMsg(1.hour, WriteMessagesSuccessful)
     fromSnr to toSnr foreach { seqNo =>
-      probe.expectMsgPF() {
+      probe.expectMsgPF(1.hour) {
         case WriteMessageSuccess(PersistentImpl(payload, `seqNo`, `pid`, _, _, `sender`, `writerUuid`), _) =>
           val id = s"a-$seqNo"
           payload should matchPattern {
