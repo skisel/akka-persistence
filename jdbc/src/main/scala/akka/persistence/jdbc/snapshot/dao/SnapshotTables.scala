@@ -24,7 +24,7 @@ object SnapshotTables {
   case class SnapshotRow(persistenceId: String, sequenceNumber: Long, created: Long, snapshot: Array[Byte])
 
   def isOracleDriver(profile: JdbcProfile) =
-    profile.getClass.getName.contains("OracleDriver")
+    profile.getClass.getName.contains("Oracle")
 }
 
 trait SnapshotTables {

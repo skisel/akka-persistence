@@ -68,7 +68,7 @@ trait OracleReadJournalDao extends ReadJournalDao {
 
   import profile.api._
 
-  private lazy val isOracleDriver = profile.getClass.getName.contains("OracleDriver")
+  private lazy val isOracleDriver = profile.getClass.getName.contains("Oracle")
 
   abstract override def allPersistenceIdsSource(max: Long): Source[String, NotUsed] = {
     if (isOracleDriver) {

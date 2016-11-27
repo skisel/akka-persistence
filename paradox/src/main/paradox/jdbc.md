@@ -38,11 +38,9 @@ Gradle
     @@@
 
 Please note [PR #75 - Removed binary dependency on slick-extensions](https://github.com/dnvriend/akka-persistence-jdbc/pull/75),
-if you are using the Oracle driver, you must have a [Lightbend subscription](https://www.lightbend.com/platform/subscription).
+if you are using the Oracle driver from slick-extensions, you must have a [Lightbend subscription](https://www.lightbend.com/platform/subscription).
 I have misinterpreted Lightbend open sourcing slick-extensions 3.1.0 as a change to the license, it didn't so you __cannot__ use it
 for free.
-
-If using Oracle, you'll also need the Slick Oracle driver:
 
 ```
 // to resolve the slick-extensions you need the following repo
@@ -50,6 +48,14 @@ resolvers += "Typesafe Releases" at "http://repo.typesafe.com/typesafe/maven-rel
 
 libraryDependencies += "com.typesafe.slick" %% "slick-extensions" % "3.1.0"
 ```
+
+If you do not have subscription you may use [freeslick](https://github.com/smootoo/freeslick), because it provides a free open-source driver for Oracle:
+
+```
+libraryDependencies += "org.suecarter" %% "freeslick" % "3.1.1.1"
+```
+
+
 
 ## Contribution policy
 
@@ -76,6 +82,7 @@ Configure `slick`:
   - `slick.driver.MySQLDriver$`
   - `slick.driver.H2Driver$`
   - `com.typesafe.slick.driver.oracle.OracleDriver$`
+  - `freeslick.OracleProfile$`
 
 ## Database Schema
 
@@ -103,8 +110,11 @@ Postgres
 MySQL
 :   @@snip[application.conf](/../../../../jdbc/src/test/resources/mysql-application.conf)
 
-Oracle
+Oracle (with slick-extensions)
 :   @@snip[application.conf](/../../../../jdbc/src/test/resources/oracle-application.conf)
+
+Oracle (with freeslick)
+:   @@snip[application.conf](/../../../../jdbc/src/test/resources/freeslick-oracle-application.conf)
     
 H2
 :   @@snip[application.conf](/../../../../jdbc/src/test/resources/h2-application.conf)

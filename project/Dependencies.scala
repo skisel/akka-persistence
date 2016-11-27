@@ -31,6 +31,7 @@ object Dependencies {
       libraryDependencies ++= Seq(
         "com.typesafe.slick" %% "slick" % SlickVersion,
         "com.typesafe.slick" %% "slick-extensions" % "3.1.0" % Test,
+        "org.suecarter" %% "freeslick" % "3.1.1.1" % Test,
         "com.typesafe.slick" %% "slick-hikaricp" % SlickVersion exclude("com.zaxxer", "HikariCP-java6"),
         "com.zaxxer" % "HikariCP" % HikariCPVersion,
         "org.postgresql" % "postgresql" % "9.4.1212" % Test,
